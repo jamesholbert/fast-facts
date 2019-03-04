@@ -4,27 +4,26 @@ export const backgrounds = {
   city: 'https://i.pinimg.com/originals/de/7c/7e/de7c7eeaa04cab331a17827daa14e1ee.jpg',
 }
 
-// export const marioUrl='https://img.rankedboost.com/wp-content/plugins/super-smash-bros-ultimate/assets/character-images-main/Dr_Mario_SSBU.png'
-export const marioUrl='https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716'
+export const raylaUrl='https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716'
 
 export const mathChoices = [
 	{
 		symbol: '+',
 		type: 'add',
 		calculation: (a,b)=>a+b,
-		reference: 'to'
+		reference: '+'
 	},
 	{
 		symbol: '-',
 		type: 'subtract',
 		calculation: (a,b)=>a-b,
-		reference: 'from'
+		reference: '-'
 	},
 	{
 		symbol: 'x',
 		type: 'multiply',
 		calculation: (a,b)=>a*b,
-		reference: 'by'
+		reference: 'x'
 	},
 	// {
 	// 	symbol: '/',
@@ -36,17 +35,23 @@ export const mathChoices = [
 
 export const getQuestion = ({ symbol, type, calculation, reference, range = 10 }) => {
 	const [ first, second ] = getTwoRandomNumbers(range)
-
+	// const variance = getRandomNumber(3)
 	return {
-		question: 'What do you get when you ' + type + ' ' + first + ' ' + reference + ' ' + second + '?',
+		question: first + ' ' + reference + ' ' + second + ' =',
 		correctAnswer: calculation(first, second),
-		answers: shuffle([1,2,3,4])
+		answers: shuffle([
+			calculation(first, second),
+			calculation(first, second - 1),
+			calculation(first, second + 1),
+			calculation(first, second - 2),
+			calculation(first, second + 2)
+		])
 	}
 }
 
-const getRandomNumber = range => Math.floor(Math.random() * range) + 0
+const getRandomNumber = range => Math.floor(Math.random() * (range - 2)) + 3
 
-const getTwoRandomNumbers = ({ range }) => [getRandomNumber(range), getRandomNumber(range)]
+const getTwoRandomNumbers = range => [getRandomNumber(range), getRandomNumber(range)]
 
 const shuffle = array => {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -66,3 +71,12 @@ const shuffle = array => {
 
   return array;
 }
+
+export const introTalk = name => ([
+	{text:'Hey there, ' + name + '. Great to have you.'},
+	{text:"We need your help. There's a Math Breathing Dragon threatening our kingdom."},
+	{text:"Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
+	{text:"Will you help us?", choices: ['Yes', 'No']},
+	{text:"You probably aren't strong enough yet to take him on."},
+	{text:"So you'll need to train, and take on a few smaller opponents before then."},
+])

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Typist from 'react-typist'
 
 import Grid, { Cell } from './grid'
-import { marioUrl } from '../helpers'
+import { raylaUrl } from '../helpers'
 
 const FancyDiv = styled.div`
 	background-color: black;
@@ -19,6 +19,7 @@ const FancyDiv = styled.div`
 	text-align: center;
 	position: fixed;
 	bottom: 20px;
+	height: 70px;
 `
 
 export const FancyButton = styled.button`
@@ -34,25 +35,28 @@ export const FancyButton = styled.button`
 	cursor: pointer;
 `
 
-const MarioImage = styled.img`
-	height: 150%;
+const Avatar = styled.img`
+	height: 450%;
 	width: auto;
 	position: absolute
-	bottom: 10px;
+	bottom: -200px;
 	left: 10px;
 `
 
-const ChatBox = ({ children, choices }) => {
+const ChatBox = ({ avatar, choices, children }) => {
 	return <FancyDiv>
 		<Grid numColumns={10}>
-			<Cell>
-				<MarioImage src={marioUrl} />
-			</Cell>
+			{avatar && 
+				<Cell>
+					<Avatar src={raylaUrl} />
+				</Cell>
+			}
 			<Cell span={9 - choices.length}>
 				<Typist 
 					avgTypingDelay={10} 
 					startDelay={100} 
 					cursor={{show: false}}
+					key={children}
 				>
 					{children}
 				</Typist>
