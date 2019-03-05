@@ -1,3 +1,6 @@
+import React from 'react'
+import { FancyButton } from '../components/chatBox'
+
 export const backgrounds = {
   sky: 'https://cdna2.artstation.com/p/assets/images/images/000/176/778/large/didier-konings-july-2014-didier-konings-skyship-cove.jpg?1408748863',
   countrySide: 'https://i.pinimg.com/originals/f5/c3/09/f5c30922330d28afb4406ad245ea50bb.jpg',
@@ -73,13 +76,34 @@ const shuffle = array => {
 }
 
 export const gameStates = [
-	{text: "Hello! What's your name?", inputs: 'name'},
+	{text: "Hello! What's your name?", input: 'name'},
 	{text: name => ('Nice to meet you, ' + name + '. Great to have you.')},
-	{text: "We need your help. There's a Math Breathing Dragon threatening our kingdom."},
+	{text: "We need your help! There's a Math Breathing Dragon threatening our kingdom."},
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
-	{text: "Will you help us?", choices: ['Yes', 'No']},
+	{
+		text: "Will you help us?", 
+		choices: ({setLocation, location}) => ['Yes','No'].map((v, i)=><FancyButton 
+			key={i}
+			onClick={()=>{
+				setLocation(location + 1)
+			}}
+		>
+			{v}
+		</FancyButton>)	},
 	{text: "You probably aren't strong enough yet to take him on."},
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
+	{
+		text: "What type of math do you want to practice?", 
+		choices: ({setCurrentBar, setMathType, setLocation, location}) => mathChoices.map(type=><FancyButton 
+			key={type.type}
+			onClick={()=>{
+				setMathType(type)
+				setLocation(-1)
+			}}
+		>
+			{type.symbol}
+		</FancyButton>)
+	}
 ]
 
 
@@ -96,3 +120,17 @@ export const gameStates = [
 
 
 */
+
+{/*mathChoices.map(type=><FancyButton */}
+  //     key={type.type}
+  //     onClick={()=>{
+  //       const newQuestionSet = getQuestion(type)
+  //       resetBaddieHp()
+  //       setCurrentBar(100)
+  //       setMathType(type.type)
+  //       setCurrentChat(newQuestionSet.question)
+  //       setCurrentAnswers(newQuestionSet.answers.map(answer=>getMathAnswers(answer, newQuestionSet.correctAnswer, type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)))
+  //     }}
+  //   >
+  //     {type.symbol}
+  //   </FancyButton>)

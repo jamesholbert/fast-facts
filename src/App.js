@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import ChatBox, { FancyButton } from './components/chatBox'
 import GrowthBar from './components/growthBar'
 import BigText from './components/bigText'
+import LogoutButton from './components/logout'
 
 import { backgrounds, mathChoices, getQuestion, gameStates } from './helpers'
 
@@ -21,35 +22,49 @@ const Container = styled.div`
 `
 
 const App = ({ 
-  currentChat, currentAnswers, setCurrentChat, setCurrentAnswers, 
+  currentAnswers, setCurrentChat, setCurrentAnswers, 
   setMathType, mathType, resetBaddieHp, baddieHp, baddieMaxHp, bigText, 
-  dealDamage, location, setLocation
+  dealDamage, location, setLocation, setName, playerName
 }) => {
-  const [ currentBar, setCurrentBar ] = useState(0)
-  const [ timer, setTimer ] = useState(null)
+  const [ currentBar, setCurrentBar ] = useState(0) // number
+  const [ timer, setTimer ] = useState(null) // interval
 
   const dealLocalDamage = () => {
-    console.log(timer)
-    dealDamage(timer)
+    console.log(currentBar)
+    dealDamage(currentBar)
   }
 
   useEffect(()=>{
-    const firstQuestion = setTimeout(()=>setCurrentChat('Hello there! What type of facts would you like to learn?'), 1000)
-
-    setCurrentAnswers(mathChoices.map(type=><FancyButton 
-      key={type.type}
-      onClick={()=>{
-        const newQuestionSet = getQuestion(type)
-        resetBaddieHp()
-        setCurrentBar(100)
-        setMathType(type.type)
-        setCurrentChat(newQuestionSet.question)
-        setCurrentAnswers(newQuestionSet.answers.map(answer=>getMathAnswers(answer, newQuestionSet.correctAnswer, type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)))
-      }}
-    >
-      {type.symbol}
-    </FancyButton>))
+    const playerName = localStorage.getItem('name');
+    if(playerName){
+      setName(playerName)
+      setLocation(1)
+    }
   }, [])
+
+  let current 
+  if(location < 0){
+    current = getQuestion(mathType)
+console.log(current);
+  }
+  else {
+    current = gameStates[location]
+  }
+  const text = typeof current.text === 'function' ? current.text(playerName) : current.text
+  let answers
+
+  const nameRef = useRef()
+  if(current.input){
+    answers = [
+      <button key={0} onClick={()=>{setName(nameRef.current.value);setLocation(location+1)}}>enter</button>,
+      <input key={1} type='text' ref={nameRef} />
+    ]
+  }
+  else {
+    answers = current.choices 
+      ? current.choices({setCurrentBar, setMathType, setLocation, location}) 
+      : [<FancyButton key={1} onClick={()=>setLocation(location+1)}>...</FancyButton>]
+  }
 
   useEffect(()=>{
     if(currentBar > 0 && !timer){
@@ -61,15 +76,17 @@ const App = ({
 
   return (
     <Container>
+      {playerName && <LogoutButton onClick={()=>{setName('');setLocation(0)}} />}
       {currentBar && 
-        <GrowthBar percent={currentBar} decrement={1} onTimeout={()=>{}} />
+        <GrowthBar percent={currentBar} onTimeout={()=>{}} />
       }
-      {currentChat && 
+      {text && 
         <ChatBox
           avatar={!mathType}
-          choices={currentAnswers.map(choice=>choice)}
+          // choices={currentAnswers.map(choice=>choice)}
+          choices={answers}
         >
-          {currentChat}
+          {text}
         </ChatBox>
       }
       {bigText && <BigText text={bigText} right />}
@@ -113,7 +130,8 @@ const ConnectedApp = connect(
     currentChat: FromStore.currentChat(state),
     currentAnswers: FromStore.currentAnswers(state),
     bigText: FromStore.bigText(state),
-    location: FromStore.location(state)
+    location: FromStore.location(state),
+    playerName: FromStore.playerName(state)
   }),
   dispatch => ({
     setMathType: value => {
@@ -134,6 +152,10 @@ const ConnectedApp = connect(
     },
     setLocation: value => {
       dispatch({ type: 'LOCATION_SET', value })
+    },
+    setName: value => {
+      dispatch({ type: 'PLAYER_NAME_SET', value })
+      localStorage.setItem('name', value);
     }
   })
 )(App)
