@@ -72,11 +72,27 @@ const shuffle = array => {
   return array;
 }
 
-export const introTalk = name => ([
-	{text:'Hey there, ' + name + '. Great to have you.'},
-	{text:"We need your help. There's a Math Breathing Dragon threatening our kingdom."},
-	{text:"Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
-	{text:"Will you help us?", choices: ['Yes', 'No']},
-	{text:"You probably aren't strong enough yet to take him on."},
-	{text:"So you'll need to train, and take on a few smaller opponents before then."},
-])
+export const gameStates = [
+	{text: "Hello! What's your name?", inputs: 'name'},
+	{text: name => ('Nice to meet you, ' + name + '. Great to have you.')},
+	{text: "We need your help. There's a Math Breathing Dragon threatening our kingdom."},
+	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
+	{text: "Will you help us?", choices: ['Yes', 'No']},
+	{text: "You probably aren't strong enough yet to take him on."},
+	{text: "So you'll need to train, and take on a few smaller opponents before then."},
+]
+
+
+/* example state:
+
+{
+	text: 'Hey there, DragoonFace. Great to have you',
+	choices: (damage, type) => <FancyButton onClick />,
+	connections: []
+}
+
+
+
+
+
+*/
