@@ -82,7 +82,7 @@ export const gameStates = [
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
 	{
 		text: "Will you help us?", 
-		choices: ({setLocation, location}) => ['Yes','No'].map((v, i)=><FancyButton 
+		choices: ({setLocation, location}) => ['Yes','No'].map((v, i) => <FancyButton 
 			key={i}
 			onClick={()=>{
 				setLocation(location + 1)
@@ -94,7 +94,7 @@ export const gameStates = [
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({setCurrentBar, setMathType, setLocation, location}) => mathChoices.map(type=><FancyButton 
+		choices: ({setCurrentBar, setMathType, setLocation, location}) => mathChoices.map(type => <FancyButton 
 			key={type.type}
 			onClick={()=>{
 				setMathType(type)

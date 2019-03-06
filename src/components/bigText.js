@@ -9,7 +9,7 @@ const Container = styled.div`
 	color: ${props => props.color};
 	transition-timing-function: ease-out;
     transition-timing-function: cubic-bezier(0, 0, .2, 1);
-    top: 40%;
+    top: 30%;
 `
 
 const BigText = ({ text, color, right }) => {

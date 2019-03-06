@@ -27,13 +27,19 @@ const App = ({
   dealDamage, location, setLocation, setName, playerName
 }) => {
   const [ currentBar, setCurrentBar ] = useState(0) // number
+  const [ multiplier, setMultiplier ] = useState(0)
   const [ timer, setTimer ] = useState(null) // interval
+  const [ text, setText ] = useState(null)
+  const [ answers, setAnswers ] = useState([])
+  const nameRef = useRef()
 
   const dealLocalDamage = () => {
-    console.log(currentBar)
     dealDamage(currentBar)
+    console.log(multiplier);
+    // setMultiplier(0)
   }
 
+  // componentDidMount
   useEffect(()=>{
     const playerName = localStorage.getItem('name');
     if(playerName){
@@ -42,40 +48,69 @@ const App = ({
     }
   }, [])
 
-  let current 
-  if(location < 0){
-    current = getQuestion(mathType)
-console.log(current);
-  }
-  else {
-    current = gameStates[location]
-  }
-  const text = typeof current.text === 'function' ? current.text(playerName) : current.text
-  let answers
-
-  const nameRef = useRef()
-  if(current.input){
-    answers = [
-      <button key={0} onClick={()=>{setName(nameRef.current.value);setLocation(location+1)}}>enter</button>,
-      <input key={1} type='text' ref={nameRef} />
-    ]
-  }
-  else {
-    answers = current.choices 
-      ? current.choices({setCurrentBar, setMathType, setLocation, location}) 
-      : [<FancyButton key={1} onClick={()=>setLocation(location+1)}>...</FancyButton>]
-  }
-
   useEffect(()=>{
     if(currentBar > 0 && !timer){
       setTimer(setInterval(()=>{
         setCurrentBar(currentBar => currentBar - 1)
       }, 100))
-    }    
+    }
+    if(currentBar === 0 && location < 0){
+      console.log('loser')
+      setLocation(20)
+    }
   }, [currentBar])
+
+  // set Chat and Choices
+  useEffect(()=>{
+    let current
+
+    if(location < 0 && multiplier === 0){
+      // Do the math things
+      current = getQuestion(mathType)
+      setMultiplier(3)
+      setCurrentBar(100)
+
+      setText(current.question)
+      setAnswers(current.answers.map(answer => <FancyButton
+        key={answer}
+        onClick={()=>{
+          if(answer === current.correctAnswer){
+            dealLocalDamage()
+console.log(multiplier);
+
+            setMultiplier(0)
+          }
+          else {
+            setMultiplier(multiplier => multiplier - 1)
+          }
+        }}
+      >
+        {answer}
+      </FancyButton>))
+    }
+    else if(location > 0){
+      // Narration
+      current = gameStates[location]
+    
+      setText(typeof current.text === 'function' ? current.text(playerName) : current.text)
+
+      if(current.input){
+        setAnswers([
+          <button key={0} onClick={() => {setName(nameRef.current.value);setLocation(location+1);}}>enter</button>,
+          <input key={1} type='text' ref={nameRef} />
+        ])
+      }
+      else {
+        setAnswers(current.choices 
+          ? current.choices({setCurrentBar, setMathType, setLocation, location}) 
+          : [<FancyButton key={1} onClick={() => setLocation(location + 1)}>...</FancyButton>])
+      }
+    }
+  }, [location, baddieHp, multiplier])
 
   return (
     <Container>
+      {multiplier}
       {playerName && <LogoutButton onClick={()=>{setName('');setLocation(0)}} />}
       {currentBar && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />
@@ -83,7 +118,6 @@ console.log(current);
       {text && 
         <ChatBox
           avatar={!mathType}
-          // choices={currentAnswers.map(choice=>choice)}
           choices={answers}
         >
           {text}
@@ -96,32 +130,6 @@ console.log(current);
 
 export { App };
 
-const getMathAnswers = (
-  answer, correctAnswer, type, setCurrentChat, setCurrentAnswers, 
-  setCurrentBar, dealLocalDamage, timer
-) => <FancyButton
-  key={answer}
-  onClick={()=>{
-    if(answer === correctAnswer){
-      dealLocalDamage()
-
-      setCurrentBar(100)
-      setupNextQuestion(type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)
-    }
-    else {
-      setupNextQuestion(type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)
-    }
-  }}
->
-  {answer}
-</FancyButton>
-
-const setupNextQuestion = (type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer) => {
-  const { question, answers, correctAnswer } = getQuestion(type)
-
-  setCurrentChat(question)
-  setCurrentAnswers(answers.map(answer=>getMathAnswers(answer, correctAnswer, type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)))
-}
 
 const ConnectedApp = connect(
   state => ({
