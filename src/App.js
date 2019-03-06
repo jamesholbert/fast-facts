@@ -9,6 +9,7 @@ import BigText from './components/bigText'
 import LogoutButton from './components/logout'
 
 import { backgrounds, mathChoices, getQuestion, gameStates } from './helpers'
+import { useInterval } from './customHooks'
 
 import * as FromStore from './reducers'
 
@@ -28,17 +29,16 @@ const App = ({
 }) => {
   const [ currentBar, setCurrentBar ] = useState(0) // number
   const [ multiplier, setMultiplier ] = useState(0)
-  const [ timer, setTimer ] = useState(null) // interval
+  const [ timerIsOn, setTimerIsOn ] = useState(null) // interval
   const [ text, setText ] = useState(null)
   const [ answers, setAnswers ] = useState([])
+  const currentBarRef = useRef(currentBar)
+  const multiplierRef = useRef(multiplier)
   const nameRef = useRef()
 
-  const dealLocalDamage = () => {
-    dealDamage(currentBar)
-    console.log(currentBar);
-    console.log(multiplier);
-    // setMultiplier(0)
-  }
+  useInterval(() => {
+    setCurrentBar(currentBar => currentBar - 1)
+  }, timerIsOn ? 100 : null);
 
   // componentDidMount
   useEffect(()=>{
@@ -53,16 +53,22 @@ const App = ({
   }, [])
 
   useEffect(()=>{
-    if(currentBar > 0 && !timer){
-      setTimer(setInterval(()=>{
-        setCurrentBar(currentBar => currentBar - 1)
-      }, 100))
+    currentBarRef.current = currentBar
+    if(currentBar > 0 && !timerIsOn){
+      setTimerIsOn(true)
     }
     if(currentBar === 0 && location < 0){
-      console.log('loser')
-      setLocation(20)
+      setLocation(7)
+      setMathType(null)
+      setTimerIsOn(false)
+      setCurrentBar(0)
+      setMultiplier(0)
     }
   }, [currentBar])
+
+  useEffect(()=>{
+    multiplierRef.current = multiplier
+  }, [multiplier])
 
   // set Chat and Choices
   useEffect(()=>{
@@ -79,8 +85,7 @@ const App = ({
         key={answer}
         onClick={()=>{
           if(answer === current.correctAnswer){
-            dealLocalDamage()
-console.log(multiplier);
+            dealDamage(currentBarRef.current * multiplierRef.current)
 
             setMultiplier(0)
           }

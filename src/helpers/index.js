@@ -94,7 +94,7 @@ export const gameStates = [
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({setCurrentBar, setMathType, setLocation, location}) => mathChoices.map(type => <FancyButton 
+		choices: ({setMathType, setLocation, location}) => mathChoices.map(type => <FancyButton 
 			key={type.type}
 			onClick={()=>{
 				setMathType(type)
