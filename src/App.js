@@ -35,6 +35,7 @@ const App = ({
 
   const dealLocalDamage = () => {
     dealDamage(currentBar)
+    console.log(currentBar);
     console.log(multiplier);
     // setMultiplier(0)
   }
@@ -45,6 +46,9 @@ const App = ({
     if(playerName){
       setName(playerName)
       setLocation(1)
+    }
+    else{
+      setLocation(0)
     }
   }, [])
 
@@ -88,7 +92,7 @@ console.log(multiplier);
         {answer}
       </FancyButton>))
     }
-    else if(location > 0){
+    else if(location >= 0){
       // Narration
       current = gameStates[location]
     

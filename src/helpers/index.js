@@ -78,7 +78,7 @@ const shuffle = array => {
 export const gameStates = [
 	{text: "Hello! What's your name?", input: 'name'},
 	{text: name => ('Nice to meet you, ' + name + '. Great to have you.')},
-	{text: "We need your help! There's a Math Breathing Dragon threatening our kingdom."},
+	{text: "We need your help! There's are Math Breathing Dragons threatening our kingdom."},
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
 	{
 		text: "Will you help us?", 
@@ -90,7 +90,7 @@ export const gameStates = [
 		>
 			{v}
 		</FancyButton>)	},
-	{text: "You probably aren't strong enough yet to take him on."},
+	{text: "You probably aren't strong enough yet to take them on."},
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
