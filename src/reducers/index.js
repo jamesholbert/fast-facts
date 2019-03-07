@@ -30,7 +30,7 @@ export const playerHp = store => store.player.hp
 export const playermaxHp = store => store.player.maxHp
 export const baddieName = store => store.baddie.name
 export const baddieHp = store => store.baddie.hp
-export const baddiemaxHp = store => store.baddie.maxHp
+export const baddieMaxHp = store => store.baddie.maxHp
 export const currentChat = store => store.currentChat
 export const currentAnswers = store => store.currentAnswers
 export const bigText = store => store.bigText

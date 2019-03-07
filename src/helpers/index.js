@@ -7,7 +7,9 @@ export const backgrounds = {
   city: 'https://i.pinimg.com/originals/de/7c/7e/de7c7eeaa04cab331a17827daa14e1ee.jpg',
 }
 
-export const raylaUrl='https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716'
+export const swordUrl = 'http://vignette4.wikia.nocookie.net/elderscrolls/images/2/2e/Glass_sword.png/revision/latest?cb=20121012151804'
+export const baitUrl = 'https://vignette.wikia.nocookie.net/dragonprince/images/7/7a/BaitFull.png/revision/latest?cb=20180916191227'
+export const raylaUrl = 'https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716'
 
 export const mathChoices = [
 	{
@@ -82,7 +84,7 @@ export const gameStates = [
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
 	{
 		text: "Will you help us?", 
-		choices: ({setLocation, location}) => ['Yes','No'].map((v, i) => <FancyButton 
+		choices: ({ setLocation, location }) => ['Yes','No'].map((v, i) => <FancyButton 
 			key={i}
 			onClick={()=>{
 				setLocation(location + 1)
@@ -94,11 +96,12 @@ export const gameStates = [
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({setMathType, setLocation, location}) => mathChoices.map(type => <FancyButton 
+		choices: ({ setMathType, setLocation, resetBaddieHp }) => mathChoices.map(type => <FancyButton 
 			key={type.type}
 			onClick={()=>{
 				setMathType(type)
 				setLocation(-1)
+				resetBaddieHp(1000)
 			}}
 		>
 			{type.symbol}
