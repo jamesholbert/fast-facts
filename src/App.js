@@ -81,10 +81,9 @@ const App = ({
 
   useEffect(()=>{ // once a battle begins, this should be the first thing ran
     currentBarRef.current = currentBar
-    if(doingBattle && baddieHp > 0 && !timerIsOn){
+    if(doingBattle && baddieHp > 0 && !timerIsOn && mathType){
       setTimerIsOn(true)
       setCurrentBar(100)
-      // setDoingBattle(true)
     }
     else if(timerIsOn && currentBar <= 0){
       endBattle(false)
@@ -115,7 +114,12 @@ const App = ({
             setMultiplier(0) // at the moment this causes a reset at "Set Chat and Choices"
           }
           else {
-            setMultiplier(multiplier => multiplier - 1)
+            if(multiplierRef.current === 1){
+              endBattle(false)
+            }
+            else {
+              setMultiplier(multiplier => multiplier - 1)
+            }
           }
         }}
       >
