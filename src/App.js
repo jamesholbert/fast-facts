@@ -24,6 +24,22 @@ const Container = styled.div`
   background-position: center;
 `
 
+const NameInput = styled.input`
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+`
+
+const EnterButton = styled.button`
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  border: yellow solid 1px;
+  margin-right: 10px;
+`
+
 const App = ({ 
   currentAnswers, setCurrentChat, setCurrentAnswers, damage,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
@@ -135,11 +151,21 @@ const App = ({
       const current = gameStates[location]
     
       setText(typeof current.text === 'function' ? current.text(playerName) : current.text)
+      
+      const handleKeyPress = e => {
+        if(e.key === 'Enter'){
+          enterName(nameRef)
+        }
+      }
+      const enterName = nameRef => {
+        setName(nameRef.current.value)
+        setLocation(location+1)
+      }
 
       if(current.input){
         setAnswers([
-          <button key={0} onClick={() => {setName(nameRef.current.value);setLocation(location+1);}}>enter</button>,
-          <input key={1} type='text' ref={nameRef} />
+          <EnterButton key={0} onClick={() => enterName(nameRef)}>enter</EnterButton>,
+          <NameInput key={1} type='text' ref={nameRef} onKeyPress={handleKeyPress} />
         ])
       }
       else {
