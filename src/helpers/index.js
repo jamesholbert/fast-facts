@@ -38,7 +38,7 @@ export const mathChoices = [
 	// },
 ]
 
-export const getQuestion = ({ symbol, type, calculation, reference, range = 10 }) => {
+export const getMathQuestion = ({ calculation, reference, range = 10 }) => {
 	const [ first, second ] = getTwoRandomNumbers(range)
 	// const variance = getRandomNumber(3)
 	return {
@@ -80,31 +80,31 @@ const shuffle = array => {
 export const gameStates = [
 	{text: "Hello! What's your name?", input: 'name'},
 	{text: name => ('Nice to meet you, ' + name + '. Great to have you.')},
-	{text: "We need your help! There's are Math Breathing Dragons threatening our kingdom."},
+	{text: "We need your help! There are Math Breathing Dragons threatening our kingdom."},
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
 	{
 		text: "Will you help us?", 
-		choices: ({ setLocation, location }) => ['Yes','No'].map((v, i) => <FancyButton 
+		choices: ({ setLocation, location }) => ['Yes','No'].map((choice, i) => <FancyButton 
 			key={i}
 			onClick={()=>{
 				setLocation(location + 1)
 			}}
 		>
-			{v}
+			{choice}
 		</FancyButton>)	},
 	{text: "You probably aren't strong enough yet to take them on."},
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({ setMathType, setLocation, resetBaddieHp }) => mathChoices.map(type => <FancyButton 
-			key={type.type}
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle }) => mathChoices.map(mathType => <FancyButton 
+			key={mathType.type}
 			onClick={()=>{
-				setMathType(type)
-				setLocation(-1)
+				setMathType(mathType)
+				setDoingBattle(true)
 				resetBaddieHp(1000)
 			}}
 		>
-			{type.symbol}
+			{mathType.symbol}
 		</FancyButton>)
 	}
 ]
@@ -117,23 +117,4 @@ export const gameStates = [
 	choices: (damage, type) => <FancyButton onClick />,
 	connections: []
 }
-
-
-
-
-
 */
-
-{/*mathChoices.map(type=><FancyButton */}
-  //     key={type.type}
-  //     onClick={()=>{
-  //       const newQuestionSet = getQuestion(type)
-  //       resetBaddieHp()
-  //       setCurrentBar(100)
-  //       setMathType(type.type)
-  //       setCurrentChat(newQuestionSet.question)
-  //       setCurrentAnswers(newQuestionSet.answers.map(answer=>getMathAnswers(answer, newQuestionSet.correctAnswer, type, setCurrentChat, setCurrentAnswers, setCurrentBar, dealLocalDamage, timer)))
-  //     }}
-  //   >
-  //     {type.symbol}
-  //   </FancyButton>)

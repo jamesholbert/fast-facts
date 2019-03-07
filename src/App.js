@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux'
 
 import styled from 'styled-components'
@@ -10,7 +10,7 @@ import LogoutButton from './components/logout'
 import Sword from './components/sword'
 import Baddie from './components/baddie'
 
-import { backgrounds, mathChoices, getQuestion, gameStates } from './helpers'
+import { backgrounds, getMathQuestion, gameStates } from './helpers'
 import { useInterval } from './customHooks'
 
 import * as FromStore from './reducers'
@@ -25,8 +25,8 @@ const Container = styled.div`
 `
 
 const App = ({ 
-  currentAnswers, setCurrentChat, setCurrentAnswers, 
-  setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, bigText, 
+  currentAnswers, setCurrentChat, setCurrentAnswers, damage,
+  setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
   dealDamage, location, setLocation, setName, playerName
 }) => {
   const [ doingBattle, setDoingBattle ] = useState()
@@ -58,7 +58,13 @@ const App = ({
     }
   }, [])
 
+  useEffect(()=>{
+    multiplierRef.current = multiplier
+  }, [multiplier])
+
   const endBattle = victory => {
+    setText(victory ? 'Nice job! Here\'s some gold as a reward!'  : 'Nice try!! Maybe next time!')
+    setAnswers([])
     setMathType(null)
     setLocation(7)
     setMathType(null)
@@ -66,32 +72,34 @@ const App = ({
     setCurrentBar(0)
     setMultiplier(0)
     setVictory(victory)
-    setTimeout(()=>setDoingBattle(false), 1000)
+    setTimeout(()=>{
+      setDoingBattle(false)
+      setMathType(null)
+    }, 2000)
+    setTimeout(()=>setVictory(false), 2000)
   }
 
-  useEffect(()=>{
+  useEffect(()=>{ // once a battle begins, this should be the first thing ran
     currentBarRef.current = currentBar
-    if(currentBar > 0 && !timerIsOn){
+    if(doingBattle && baddieHp > 0 && !timerIsOn){
       setTimerIsOn(true)
-      setDoingBattle(true)
+      setCurrentBar(100)
+      // setDoingBattle(true)
     }
-    if((currentBar === 0 && location < 0) || currentBar > 0 && baddieHp < 1){
-
+    else if(timerIsOn && currentBar <= 0){
       endBattle(false)
+    } 
+    else if(timerIsOn && baddieHp <= 0){
+      endBattle(true)
     }
-  }, [currentBar])
+  }, [currentBar, doingBattle])
 
+  // set Chat and Choices to battle things
   useEffect(()=>{
-    multiplierRef.current = multiplier
-  }, [multiplier])
-
-  // set Chat and Choices
-  useEffect(()=>{
-    let current
-
-    if(location < 0 && multiplier === 0){
+    if(doingBattle && multiplier === 0 && baddieHp > 0 && mathType){
       // Do the math things
-      current = getQuestion(mathType)
+      const current = getMathQuestion(mathType)
+
       setMultiplier(3)
       setCurrentBar(100)
 
@@ -114,9 +122,13 @@ const App = ({
         {answer}
       </FancyButton>))
     }
-    else if(location >= 0){
+  }, [multiplier, doingBattle])
+
+  // set Chat and Choices
+  useEffect(()=>{
+    if(!doingBattle){
       // Narration
-      current = gameStates[location]
+      const current = gameStates[location]
     
       setText(typeof current.text === 'function' ? current.text(playerName) : current.text)
 
@@ -128,18 +140,17 @@ const App = ({
       }
       else {
         setAnswers(current.choices 
-          ? current.choices({setCurrentBar, setMathType, setLocation, location, resetBaddieHp}) 
+          ? current.choices({setCurrentBar, setMathType, setLocation, location, resetBaddieHp, setDoingBattle}) 
           : [<FancyButton key={1} onClick={() => setLocation(location + 1)}>...</FancyButton>])
       }
     }
-  }, [location, baddieHp, multiplier])
+  }, [location, doingBattle])
 
   const logout = () => {
     endBattle(false)
     setName('')
     setLocation(0)
     setText('')
-    setAnswers([])
     setDoingBattle(false)
   }
 
@@ -152,7 +163,7 @@ const App = ({
   return (
     <Container>
       {swords}
-      {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} />}
+      {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
       {playerName && <LogoutButton onClick={logout} />}
       {timerIsOn && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />
@@ -165,8 +176,8 @@ const App = ({
           {text}
         </ChatBox>
       }
-      {bigText && <BigText text={bigText} right />}
-      {victory && <BigText text='You win!' center />}
+      {damage && <BigText text={damage} right />}
+      {victory && <BigText text='You win!' top='0%' />}
     </Container>
   )
 }
@@ -181,7 +192,7 @@ const ConnectedApp = connect(
     baddieMaxHp: FromStore.baddieMaxHp(state),
     currentChat: FromStore.currentChat(state),
     currentAnswers: FromStore.currentAnswers(state),
-    bigText: FromStore.bigText(state),
+    damage: FromStore.damage(state),
     location: FromStore.location(state),
     playerName: FromStore.playerName(state)
   }),
@@ -203,8 +214,8 @@ const ConnectedApp = connect(
       dispatch({ type: 'CURRENT_ANSWERS_SET', value })
     },
     dealDamage: value => {
-      dispatch({ type: 'BIG_TEXT_SET', value })
-      setTimeout(()=>dispatch({ type: 'BIG_TEXT_SET', value: '' }), 1000)
+      dispatch({ type: 'DAMAGE_SET', value })
+      setTimeout(()=>dispatch({ type: 'DAMAGE_SET', value: '' }), 1000)
     },
     setLocation: value => {
       dispatch({ type: 'LOCATION_SET', value })

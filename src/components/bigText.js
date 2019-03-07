@@ -9,23 +9,23 @@ const Container = styled.div`
 	color: ${props => props.color};
 	transition-timing-function: ease-out;
     transition-timing-function: cubic-bezier(0, 0, .2, 1);
-    top: 30%;
 `
 
-const BigText = ({ text, color, right }) => {
+const BigText = ({ text, color, right, top }) => {
 	const [ left, setLeft ] = useState(right ? '30%' : '70%')
 
 	setTimeout(()=>{
 		setLeft(right ? '60%' : '40%')
 	}, 5)
 
-	return <Container style={{left}} color={color} >
+	return <Container style={{left, top}} color={color} >
 		{text}
 	</Container>
 }
 BigText.defaultProps = {
 	color: 'white',
-	right: false
+	right: false,
+	top: '30%'
 }
 
 export default BigText

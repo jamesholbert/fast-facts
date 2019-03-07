@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 
 import styled from 'styled-components'
 import { Progress } from 'react-sweet-progress';
@@ -17,14 +17,16 @@ const BaddieImg = styled.img`
 	height: 100%;
 `
 
-const Baddie = ({ defeated, hp, maxHp }) => {
+const Baddie = ({ defeated, hp, maxHp, right }) => {
 	const [ left, setLeft ] = useState('150%')
 
 	setTimeout(()=>{
 		setLeft('70%')
 	}, 5)
 
-	return <Container defeated={defeated} style={{left}}>
+	const styles = right ? {left: '150%'} : {left}
+
+	return <Container defeated={defeated} style={styles}>
 		<BaddieImg src={baitUrl} />
 		<Progress percent={Math.round(hp/maxHp*100)} />
 	</Container>

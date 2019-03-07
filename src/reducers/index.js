@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
 	}),
 	currentChat: compose(withPrefixedAction('CURRENT_CHAT'), withDefault(''))(primitiveReducer),
 	currentAnswers: compose(withPrefixedAction('CURRENT_ANSWERS'), withDefault([]))(primitiveReducer),
-	bigText: withPrefixedAction('BIG_TEXT')(primitiveReducer),
+	damage: withPrefixedAction('DAMAGE')(primitiveReducer),
 	location: compose(withPrefixedAction('LOCATION'), withDefault(0))(primitiveReducer)
 });
 
@@ -33,5 +33,5 @@ export const baddieHp = store => store.baddie.hp
 export const baddieMaxHp = store => store.baddie.maxHp
 export const currentChat = store => store.currentChat
 export const currentAnswers = store => store.currentAnswers
-export const bigText = store => store.bigText
+export const damage = store => store.damage
 export const location = store => store.location
