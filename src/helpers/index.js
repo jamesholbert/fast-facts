@@ -102,7 +102,7 @@ export const getMathQuestion = ({ calculation, reference, levels }, level) => {
 	}
 }
 
-const getRandomNumber = range => Math.floor(Math.random() * (range - 2)) + 3
+const getRandomNumber = range => Math.floor(Math.random() * (range - 2)) + 2
 
 const getTwoRandomNumbers = range => [getRandomNumber(range), getRandomNumber(range)]
 
