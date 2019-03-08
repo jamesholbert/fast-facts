@@ -9,6 +9,7 @@ import BigText from './components/bigText'
 import LogoutButton from './components/logout'
 import Sword from './components/sword'
 import Baddie from './components/baddie'
+// import LevelSelector from './components/levelSelector'
 
 import { backgrounds, getMathQuestion, gameStates } from './helpers'
 import { useInterval } from './customHooks'
@@ -52,6 +53,8 @@ const App = ({
   const [ text, setText ] = useState(null)
   const [ answers, setAnswers ] = useState([])
   const [ victory, setVictory ] = useState()
+  const [ delay, setDelay ] = useState(100)
+  const [ level, setLevel ] = useState(1)
   const currentBarRef = useRef(currentBar)
   const multiplierRef = useRef(multiplier)
   const nameRef = useRef()
@@ -60,7 +63,7 @@ const App = ({
     if(timerIsOn){
       setCurrentBar(currentBar => currentBar - 1)
     }
-  }, timerIsOn ? 100 : null);
+  }, timerIsOn ? delay : null);
 
   // componentDidMount
   useEffect(()=>{
@@ -91,6 +94,7 @@ const App = ({
     setTimeout(()=>{
       setDoingBattle(false)
       setMathType(null)
+      setDelay(100)
     }, 2000)
     setTimeout(()=>setVictory(false), 2000)
   }
@@ -113,7 +117,7 @@ const App = ({
   useEffect(()=>{
     if(doingBattle && multiplier === 0 && baddieHp > 0 && mathType){
       // Do the math things
-      const current = getMathQuestion(mathType)
+      const current = getMathQuestion(mathType, level)
 
       setMultiplier(3)
       setCurrentBar(100)
@@ -169,8 +173,11 @@ const App = ({
         ])
       }
       else {
+        const choiceProps = {setCurrentBar, setMathType, setLocation, location, resetBaddieHp, 
+          setDoingBattle, setLevel, setDelay, level}
+
         setAnswers(current.choices 
-          ? current.choices({setCurrentBar, setMathType, setLocation, location, resetBaddieHp, setDoingBattle}) 
+          ? current.choices(choiceProps) 
           : [<FancyButton key={1} onClick={() => setLocation(location + 1)}>...</FancyButton>])
       }
     }
@@ -192,6 +199,7 @@ const App = ({
 
   return (
     <Container>
+      {/*<LevelSelector />*/}
       {swords}
       {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
       {playerName && <LogoutButton onClick={logout} />}

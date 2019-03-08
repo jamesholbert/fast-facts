@@ -16,31 +16,79 @@ export const mathChoices = [
 		symbol: '+',
 		type: 'add',
 		calculation: (a,b)=>a+b,
-		reference: '+'
+		reference: '+',
+		levels: [
+			{
+				level: 0,
+				range: 10,
+				delay: 250
+			},
+			{
+				level: 1,
+				range: 10
+			},
+			{
+				level: 2,
+				range: 15
+			}
+		]
 	},
 	{
 		symbol: '-',
 		type: 'subtract',
 		calculation: (a,b)=>a-b,
-		reference: '-'
+		reference: '-',
+		levels: [
+			{
+				level: 0,
+				range: 10,
+				delay: 250,
+				enforcePositive: true
+			},
+			{
+				level: 1,
+				range: 10,
+				enforcePositive: true
+			},
+			{
+				level: 2,
+				range: 12
+			}
+		]
 	},
 	{
 		symbol: 'x',
 		type: 'multiply',
 		calculation: (a,b)=>a*b,
-		reference: 'x'
-	},
-	// {
-	// 	symbol: '/',
-	// 	type: 'divide',
-	// 	calculation: (a,b)=>a/b,
-	// 	reference: 'by'
-	// },
+		reference: 'x',
+		levels: [
+			{
+				level: 0,
+				range: 10,
+				delay: 250
+			},
+			{
+				level: 1,
+				range: 10
+			},
+			{
+				level: 2,
+				range: 15
+			}
+		]
+	}
 ]
 
-export const getMathQuestion = ({ calculation, reference, range = 10 }) => {
-	const [ first, second ] = getTwoRandomNumbers(range)
-	// const variance = getRandomNumber(3)
+const swapFirstAndSecond = (first, second) => ([second, first])
+
+export const getMathQuestion = ({ calculation, reference, levels }, level) => {
+	const levelOptions = levels.filter(l=>level===l.level)[0]
+	
+	let [ first, second ] = getTwoRandomNumbers(levelOptions.range)
+	if(first < second && levelOptions.enforcePositive){
+		[ first, second ] = swapFirstAndSecond(first, second)
+	}
+
 	return {
 		question: first + ' ' + reference + ' ' + second + ' =',
 		correctAnswer: calculation(first, second),
@@ -84,8 +132,8 @@ export const gameStates = [
 	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
 	{
 		text: "Will you help us?", 
-		choices: ({ setLocation, location }) => ['Yes','No'].map((choice, i) => <FancyButton 
-			key={i}
+		choices: ({ setLocation, location }) => ['Yes','No'].map(choice => <FancyButton 
+			key={choice}
 			onClick={()=>{
 				setLocation(location + 1)
 			}}
@@ -96,25 +144,19 @@ export const gameStates = [
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({ setMathType, resetBaddieHp, setDoingBattle }) => mathChoices.map(mathType => <FancyButton 
-			key={mathType.type}
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => mathType.levels.map((level => <FancyButton 
+			key={mathType.type+level.level}
 			onClick={()=>{
+				setLevel(level.level)
 				setMathType(mathType)
 				setDoingBattle(true)
 				resetBaddieHp(1000)
+				if(level.delay){
+					setDelay(level.delay)
+				}
 			}}
 		>
-			{mathType.symbol}
-		</FancyButton>)
+			{mathType.symbol} Level {level.level}
+		</FancyButton>)))
 	}
 ]
-
-
-/* example state:
-
-{
-	text: 'Hey there, DragoonFace. Great to have you',
-	choices: (damage, type) => <FancyButton onClick />,
-	connections: []
-}
-*/
