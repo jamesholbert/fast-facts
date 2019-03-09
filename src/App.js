@@ -44,7 +44,7 @@ const EnterButton = styled.button`
 const App = ({ 
   currentAnswers, setCurrentChat, setCurrentAnswers, damage, dragonsDefeated,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
-  dealDamage, location, setLocation, setName, playerName, gil, setGil, level
+  dealDamage, location, setLocation, setName, playerName, gil, setGil, level, setDragonsDefeated
 }) => {
   const [ doingBattle, setDoingBattle ] = useState()
   const [ currentBar, setCurrentBar ] = useState(0)
@@ -54,10 +54,8 @@ const App = ({
   const [ answers, setAnswers ] = useState([])
   const [ victory, setVictory ] = useState()
   const [ delay, setDelay ] = useState(100)
-  // const [ level, setLevel ] = useState(1)
   const currentBarRef = useRef(currentBar)
   const multiplierRef = useRef(multiplier)
-  // const levelRef = useRef(level)
   const nameRef = useRef()
 
   useInterval(() => {
@@ -66,25 +64,46 @@ const App = ({
     }
   }, timerIsOn ? delay : null);
 
-  // componentDidMount
-  useEffect(()=>{
-    const playerName = localStorage.getItem('name');
-    if(playerName){
-      setName(playerName)
-      setLocation(1)
-    }
-    else{
-      setLocation(0)
-    }
-  }, [])
-
   useEffect(()=>{
     multiplierRef.current = multiplier
   }, [multiplier])
 
-  // useEffect(()=>{
-  //   levelRef.current = level
-  // }, [level])
+  // componentDidMount
+  useEffect(()=>{
+    load()
+  }, [])
+
+  const load = (name = '') => {
+    const playerName = name ? name : localStorage.getItem('mathDragonName');
+    const gameData = JSON.parse(localStorage.getItem('mathDragons'));
+
+    if(playerName && gameData && gameData[playerName]){
+      setName(playerName)
+      setGil(gameData[playerName].gil)
+      setDragonsDefeated(gameData[playerName].dragonsDefeated)
+      setLocation(7)
+    }
+    else if(name){
+      setLocation(1)
+      setName(name)
+    }
+    else{
+      setLocation(0)
+    }
+  }
+
+  const save = () => {
+    let gameData = localStorage.getItem('mathDragons')
+
+    gameData = gameData ? JSON.parse(gameData) : {}
+
+    gameData[playerName] = {
+      level,
+      gil,
+      dragonsDefeated
+    }
+    localStorage.setItem('mathDragons', JSON.stringify(gameData))
+  }
 
   const endBattle = victory => {
     setText(victory ? 'Nice job! Here\'s some gil as a reward!'  : 'Nice try!! Maybe next time!')
@@ -168,8 +187,9 @@ const App = ({
         }
       }
       const enterName = nameRef => {
-        setName(nameRef.current.value)
-        setLocation(location+1)
+        // setName(nameRef.current.value)
+        load(nameRef.current.value)
+        // setLocation(location+1)
       }
 
       if(current.input){
@@ -179,7 +199,6 @@ const App = ({
         ])
       }
       else {
-        console.log(level)
         const choiceProps = {setCurrentBar, setMathType, setLocation, location, resetBaddieHp, 
           setDoingBattle, setDelay, level}
 
@@ -206,7 +225,7 @@ const App = ({
 
   return (
     <Container>
-      <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} />
+      <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} onSave={save} />
       {swords}
       {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
       {playerName && <LogoutButton onClick={logout} />}
@@ -270,10 +289,13 @@ const ConnectedApp = connect(
     },
     setName: value => {
       dispatch({ type: 'PLAYER_NAME_SET', value })
-      localStorage.setItem('name', value);
+      localStorage.setItem('mathDragonName', value);      
     },
     setGil: value => {
       dispatch({ type: 'GIL_SET', value })
+    },
+    setDragonsDefeated: value => {
+      dispatch({ type: 'DRAGONS_DEFEATED_SET', value })
     }
   })
 )(App)

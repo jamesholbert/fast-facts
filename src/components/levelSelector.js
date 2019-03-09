@@ -19,7 +19,7 @@ const Container = styled.button`
 	margin-top: 10px;
 `
 
-const ChoiceContainer = styled.button`
+export const ChoiceContainer = styled.button`
 	cursor: pointer;
 	border: solid 1px ${({ color }) => color};
 	border-radius: 10px;

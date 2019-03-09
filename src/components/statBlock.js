@@ -2,7 +2,7 @@ import React from 'react'
 
 import styled from 'styled-components'
 
-import LevelSelector from './levelSelector'
+import LevelSelector, { ChoiceContainer } from './levelSelector'
 
 const Container = styled.div`
 	position: fixed;
@@ -29,12 +29,13 @@ const StatContainer = styled.div`
 	margin-top: 20px;
 `
 
-const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle }) => {
+const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, onSave }) => {
 	return name && <Container>
 		<NameContainer>{name}</NameContainer>
 		<LevelSelector {...{doingBattle}} />
 		<StatContainer>Gil: {gil}</StatContainer>
 		<StatContainer>Dragons Defeated: {dragonsDefeated}</StatContainer>
+		<ChoiceContainer onClick={onSave}>Save</ChoiceContainer>
 	</Container>
 }
 

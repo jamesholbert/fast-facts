@@ -145,7 +145,7 @@ export const gameStates = [
 	{
 		text: "What type of math do you want to practice?", 
 		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => {
-console.log(level);
+
 			const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
 
 			return <FancyButton 
