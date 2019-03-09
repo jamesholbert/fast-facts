@@ -8,29 +8,32 @@ import { baitUrl } from '../helpers'
 
 const Container = styled.div`
 	position: fixed;
-	height: 100px;
+	height: ${props => props.isDragon ? '70%' : '100px'};
 	transition-duration: 1s;
-	top: ${props => props.defeated ? '200%' : '40%'};
+	top: ${props => props.defeated ? '200%' : props.isDragon ? '5%' : '30%'};
 `
 
 const BaddieImg = styled.img`
-	width: 200px;
-	height: auto;
+	// width: ${props => props.isDragon ? 'auto' : '200px'};
+	height: 100%;
+	width: auto;
+	// height: ${props => props.isDragon ? '80%' : 'auto'};
+
 `
 
-const Baddie = ({ defeated, hp, maxHp, right, url, name }) => {
+const Baddie = ({ defeated, hp, maxHp, right, url, name, isDragon }) => {
 	const [ left, setLeft ] = useState('150%')
 
 	setTimeout(()=>{
-		setLeft('70%')
+		setLeft(isDragon ? '60%' : '70%')
 	}, 5)
 
 	const styles = right ? {left: '150%'} : {left}
 
-	return <Container defeated={defeated} style={styles}>
-		{name}
-		<BaddieImg src={url} />
+	return <Container isDragon={isDragon} defeated={defeated} style={styles}>
+		<BaddieImg src={url} isDragon={isDragon} />
 		<Progress percent={Math.round(hp/maxHp*100)} />
+		{name}
 	</Container>
 }
 Baddie.defaultProps = {

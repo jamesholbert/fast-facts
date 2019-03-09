@@ -6,7 +6,7 @@ import { withPrefixedAction, withDefault } from './utils';
 
 const rootReducer = combineReducers({
 	level: compose(withPrefixedAction('LEVEL'), withDefault(1))(primitiveReducer),
-	maxLevel: compose(withPrefixedAction('MAX_LEVEL'), withDefault(2))(primitiveReducer),
+	maxLevel: compose(withPrefixedAction('MAX_LEVEL'), withDefault(3))(primitiveReducer),
 	gil: compose(withPrefixedAction('GIL'), withDefault(0))(primitiveReducer),
 	mathType: withPrefixedAction('MATH_TYPE')(primitiveReducer),
 	player: combineReducers({

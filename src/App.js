@@ -107,7 +107,12 @@ const App = ({
 
   const endBattle = victory => {
     setText(victory ? 'Nice job! Here\'s some gil as a reward!'  : 'Nice try!! Maybe next time!')
-    if(victory){setGil(gil+((5*(level*level)) || 1))}
+    if(victory){
+      setGil(gil+((5*(level*level)) || 1))
+      if(level === 10){
+        setDragonsDefeated(dragonsDefeated+1)
+      }
+    }
     setAnswers([])
     setMathType(null)
     setLocation(7)
@@ -187,9 +192,7 @@ const App = ({
         }
       }
       const enterName = nameRef => {
-        // setName(nameRef.current.value)
         load(nameRef.current.value)
-        // setLocation(location+1)
       }
 
       if(current.input){
@@ -212,9 +215,11 @@ const App = ({
   const logout = () => {
     endBattle(false)
     setName('')
+    setGil(0)
     setLocation(0)
     setText('')
     setDoingBattle(false)
+    localStorage.setItem('mathDragonName', '');      
   }
 
   let swords = []
@@ -228,7 +233,15 @@ const App = ({
     <Container>
       <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} onSave={save} />
       {swords}
-      {doingBattle && <Baddie name={baddieName} url={url} hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
+      {doingBattle && <Baddie 
+        name={baddieName} 
+        url={url} 
+        hp={baddieHp} 
+        maxHp={baddieMaxHp} 
+        defeated={baddieHp < 1} 
+        right={currentBar <= 0 && baddieHp > 0} 
+        isDragon={level === 10}
+      />}
       {playerName && <LogoutButton onClick={logout} />}
       {timerIsOn && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />

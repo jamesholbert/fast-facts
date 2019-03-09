@@ -48,6 +48,8 @@ LevelChoice.defaultProps = {
 	focusBorderColor: 'yellow'
 }
 
+const addLevelChoice = (level, onSelect) => <LevelChoice top={level} key={level} text={level} onSelect={onSelect} />
+
 const LevelSelector = ({ level, maxLevel, onSelect, doingBattle }) => {
 	const [ open, setOpen ] = useState()
 
@@ -55,9 +57,10 @@ const LevelSelector = ({ level, maxLevel, onSelect, doingBattle }) => {
 		let levelChoices = []
 		for(let i = 0; i<maxLevel+1; i++){
 			levelChoices.push(
-				<LevelChoice top={i} key={i} text={i} onSelect={()=>{onSelect(i);setOpen(false);}} />
+				addLevelChoice(i, ()=>{onSelect(i);setOpen(false);})
 			)
 		}
+		levelChoices.push(addLevelChoice(10, ()=>{onSelect(10);setOpen(false);}))
 		return <span onMouseLeave={()=>setOpen(false)}>
 			<Grid 
 				numColumns={3}
