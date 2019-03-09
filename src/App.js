@@ -222,12 +222,13 @@ const App = ({
     const left = i*60 + 300
     swords.push(<Sword key={i} left={left} />)
   }
+  const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
     <Container>
       <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} onSave={save} />
       {swords}
-      {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
+      {doingBattle && <Baddie name={baddieName} url={url} hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
       {playerName && <LogoutButton onClick={logout} />}
       {timerIsOn && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />

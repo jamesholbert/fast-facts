@@ -14,10 +14,11 @@ const Container = styled.div`
 `
 
 const BaddieImg = styled.img`
-	height: 100%;
+	width: 200px;
+	height: auto;
 `
 
-const Baddie = ({ defeated, hp, maxHp, right }) => {
+const Baddie = ({ defeated, hp, maxHp, right, url, name }) => {
 	const [ left, setLeft ] = useState('150%')
 
 	setTimeout(()=>{
@@ -27,7 +28,8 @@ const Baddie = ({ defeated, hp, maxHp, right }) => {
 	const styles = right ? {left: '150%'} : {left}
 
 	return <Container defeated={defeated} style={styles}>
-		<BaddieImg src={baitUrl} />
+		{name}
+		<BaddieImg src={url} />
 		<Progress percent={Math.round(hp/maxHp*100)} />
 	</Container>
 }
