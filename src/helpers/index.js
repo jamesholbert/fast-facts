@@ -144,19 +144,23 @@ export const gameStates = [
 	{text: "So you'll need to train, and take on a few smaller opponents before then."},
 	{
 		text: "What type of math do you want to practice?", 
-		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => mathType.levels.map((level => <FancyButton 
-			key={mathType.type+level.level}
-			onClick={()=>{
-				setLevel(level.level)
-				setMathType(mathType)
-				setDoingBattle(true)
-				resetBaddieHp(1000)
-				if(level.delay){
-					setDelay(level.delay)
-				}
-			}}
-		>
-			{mathType.symbol} Level {level.level}
-		</FancyButton>)))
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => {
+console.log(level);
+			const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
+
+			return <FancyButton 
+				key={mathType.type+level}
+				onClick={()=>{
+					setMathType(mathType)
+					setDoingBattle(true)
+					resetBaddieHp(1000)
+					if(levelOptions.delay){
+						setDelay(levelOptions.delay)
+					}
+				}}
+			>
+				{mathType.symbol}
+			</FancyButton>
+		})
 	}
 ]

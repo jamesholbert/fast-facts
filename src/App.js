@@ -9,7 +9,7 @@ import BigText from './components/bigText'
 import LogoutButton from './components/logout'
 import Sword from './components/sword'
 import Baddie from './components/baddie'
-// import LevelSelector from './components/levelSelector'
+import StatBlock from './components/statBlock'
 
 import { backgrounds, getMathQuestion, gameStates } from './helpers'
 import { useInterval } from './customHooks'
@@ -42,9 +42,9 @@ const EnterButton = styled.button`
 `
 
 const App = ({ 
-  currentAnswers, setCurrentChat, setCurrentAnswers, damage,
+  currentAnswers, setCurrentChat, setCurrentAnswers, damage, dragonsDefeated,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
-  dealDamage, location, setLocation, setName, playerName
+  dealDamage, location, setLocation, setName, playerName, gil, setGil, level
 }) => {
   const [ doingBattle, setDoingBattle ] = useState()
   const [ currentBar, setCurrentBar ] = useState(0)
@@ -54,9 +54,10 @@ const App = ({
   const [ answers, setAnswers ] = useState([])
   const [ victory, setVictory ] = useState()
   const [ delay, setDelay ] = useState(100)
-  const [ level, setLevel ] = useState(1)
+  // const [ level, setLevel ] = useState(1)
   const currentBarRef = useRef(currentBar)
   const multiplierRef = useRef(multiplier)
+  // const levelRef = useRef(level)
   const nameRef = useRef()
 
   useInterval(() => {
@@ -81,8 +82,13 @@ const App = ({
     multiplierRef.current = multiplier
   }, [multiplier])
 
+  // useEffect(()=>{
+  //   levelRef.current = level
+  // }, [level])
+
   const endBattle = victory => {
-    setText(victory ? 'Nice job! Here\'s some gold as a reward!'  : 'Nice try!! Maybe next time!')
+    setText(victory ? 'Nice job! Here\'s some gil as a reward!'  : 'Nice try!! Maybe next time!')
+    if(victory){setGil(gil+((5*(level*level)) || 1))}
     setAnswers([])
     setMathType(null)
     setLocation(7)
@@ -169,12 +175,13 @@ const App = ({
       if(current.input){
         setAnswers([
           <EnterButton key={0} onClick={() => enterName(nameRef)}>enter</EnterButton>,
-          <NameInput key={1} type='text' ref={nameRef} onKeyPress={handleKeyPress} />
+          <NameInput key={1} type='text' ref={nameRef} onKeyPress={handleKeyPress} maxLength={15} />
         ])
       }
       else {
+        console.log(level)
         const choiceProps = {setCurrentBar, setMathType, setLocation, location, resetBaddieHp, 
-          setDoingBattle, setLevel, setDelay, level}
+          setDoingBattle, setDelay, level}
 
         setAnswers(current.choices 
           ? current.choices(choiceProps) 
@@ -193,13 +200,13 @@ const App = ({
 
   let swords = []
   for (let i=0;i<multiplier;i++){
-    const left = i*30 + 30
+    const left = i*60 + 300
     swords.push(<Sword key={i} left={left} />)
   }
 
   return (
     <Container>
-      {/*<LevelSelector />*/}
+      <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} />
       {swords}
       {doingBattle && <Baddie hp={baddieHp} maxHp={baddieMaxHp} defeated={baddieHp < 1} right={currentBar <= 0 && baddieHp > 0} />}
       {playerName && <LogoutButton onClick={logout} />}
@@ -232,7 +239,10 @@ const ConnectedApp = connect(
     currentAnswers: FromStore.currentAnswers(state),
     damage: FromStore.damage(state),
     location: FromStore.location(state),
-    playerName: FromStore.playerName(state)
+    playerName: FromStore.playerName(state),
+    level: FromStore.playerLevel(state),
+    gil: FromStore.gil(state),
+    dragonsDefeated: FromStore.dragonsDefeated(state)
   }),
   dispatch => ({
     setMathType: value => {
@@ -261,6 +271,9 @@ const ConnectedApp = connect(
     setName: value => {
       dispatch({ type: 'PLAYER_NAME_SET', value })
       localStorage.setItem('name', value);
+    },
+    setGil: value => {
+      dispatch({ type: 'GIL_SET', value })
     }
   })
 )(App)

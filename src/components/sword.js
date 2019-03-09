@@ -6,8 +6,9 @@ import { swordUrl } from '../helpers'
 
 const Container = styled.div`
 	position: fixed;
-	height: 100px;
+	height: 150px;
 	top: 40px;
+	transform: rotate(25deg);
 `
 
 const SwordImage = styled.img`
