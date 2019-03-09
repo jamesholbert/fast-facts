@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
 	currentChat: withPrefixedAction('CURRENT_CHAT')(primitiveReducer),
 	currentAnswers: compose(withPrefixedAction('CURRENT_ANSWERS'), withDefault([]))(primitiveReducer),
 	damage: withPrefixedAction('DAMAGE')(primitiveReducer),
-	location: compose(withPrefixedAction('LOCATION'), withDefault(0))(primitiveReducer),
+	location: compose(withPrefixedAction('LOCATION'), withDefault('intro1'))(primitiveReducer),
 	dragonsDefeated: compose(withPrefixedAction('DRAGONS_DEFEATED'), withDefault(0))(primitiveReducer)
 });
 

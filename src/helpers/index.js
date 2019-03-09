@@ -186,25 +186,45 @@ const shuffle = array => {
   return array;
 }
 
-export const gameStates = [
-	{text: "Hello! What's your name?", input: 'name'},
-	{text: name => ('Nice to meet you, ' + name + '. Great to have you.')},
-	{text: "We need your help! There are Math Breathing Dragons threatening our kingdom."},
-	{text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing."},
-	{
+const buttonsForLocations = (choiceArray, setLocation) => choiceArray.map((choice, i)=><FancyButton
+	key={i}
+	onClick={()=>setLocation(choice.location)}
+>
+	{choice.text || 'next'}
+</FancyButton>)
+
+export const gameStates = {
+	intro1: {
+		text: "Hello! What's your name?", 
+		input: 'name',
+		inputTarget: 'intro2' 
+	},
+	intro2: {
+		text: name => ('Nice to meet you, ' + name + '. Great to have you.'),
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro3'}], setLocation)
+	},
+	intro3: {
+		text: "We need your help! There are Math Breathing Dragons threatening our kingdom.",
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro4'}], setLocation)		
+	},
+	intro4: {
+		text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing.",
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro5'}], setLocation)
+	},
+	intro5: {
 		text: "Will you help us?", 
-		choices: ({ setLocation, location }) => ['Yes','No'].map(choice => <FancyButton 
-			key={choice}
-			onClick={()=>{
-				setLocation(location + 1)
-			}}
-		>
-			{choice}
-		</FancyButton>)	},
-	{text: "You probably aren't strong enough yet to take them on."},
-	{text: "So you'll need to train, and take on a few smaller opponents before then."},
-	{
-		text: "What type of math do you want to practice?", 
+		choices: ({ setLocation }) => buttonsForLocations([{'location': 'intro6', text: 'Yes'}, {'location': 'intro6', text: 'No'}], setLocation)
+	},
+	intro6: {
+		text: "You probably aren't strong enough yet to take them on.",
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro7'}], setLocation)
+	},
+	intro7: {
+		text: "So you'll need to train, and take on a few smaller opponents before then.",
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'chooseMathType'}], setLocation)
+	},
+	chooseMathType: {
+		text: "What type of math do you want to battle?", 
 		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => {
 
 			const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
@@ -214,7 +234,7 @@ export const gameStates = [
 				onClick={()=>{
 					setMathType(mathType)
 					setDoingBattle(true)
-					resetBaddieHp(1000)
+					resetBaddieHp(levelOptions.baddieHp || 1000)
 					if(levelOptions.delay){
 						setDelay(levelOptions.delay)
 					}
@@ -224,4 +244,4 @@ export const gameStates = [
 			</FancyButton>
 		})
 	}
-]
+}

@@ -81,14 +81,14 @@ const App = ({
       setName(playerName)
       setGil(gameData[playerName].gil)
       setDragonsDefeated(gameData[playerName].dragonsDefeated)
-      setLocation(7)
+      setLocation('chooseMathType')
     }
     else if(name){
-      setLocation(1)
+      setLocation('intro2')
       setName(name)
     }
     else{
-      setLocation(0)
+      setLocation('intro1')
     }
   }
 
@@ -115,7 +115,7 @@ const App = ({
     }
     setAnswers([])
     setMathType(null)
-    setLocation(7)
+    setLocation('chooseMathType')
     setMathType(null)
     setTimerIsOn(false)
     setCurrentBar(0)
@@ -182,32 +182,32 @@ const App = ({
   useEffect(()=>{
     if(!doingBattle){
       // Narration
-      const current = gameStates[location]
+      const currentLocation = gameStates[location]
     
-      setText(typeof current.text === 'function' ? current.text(playerName) : current.text)
+      setText(typeof currentLocation.text === 'function' ? currentLocation.text(playerName) : currentLocation.text)
       
       const handleKeyPress = e => {
         if(e.key === 'Enter'){
-          enterName(nameRef)
+          enterName(nameRef.current.value)
         }
       }
-      const enterName = nameRef => {
-        load(nameRef.current.value)
+      const enterName = name => {
+        if(name){
+          load(name)
+        }
       }
 
-      if(current.input){
+      if(currentLocation.input){
         setAnswers([
-          <EnterButton key={0} onClick={() => enterName(nameRef)}>enter</EnterButton>,
+          <EnterButton key={0} onClick={() => enterName(nameRef.current.value)}>enter</EnterButton>,
           <NameInput key={1} type='text' ref={nameRef} onKeyPress={handleKeyPress} maxLength={15} />
         ])
       }
       else {
-        const choiceProps = {setCurrentBar, setMathType, setLocation, location, resetBaddieHp, 
+        const choiceProps = {setCurrentBar, setMathType, setLocation, resetBaddieHp, 
           setDoingBattle, setDelay, level}
 
-        setAnswers(current.choices 
-          ? current.choices(choiceProps) 
-          : [<FancyButton key={1} onClick={() => setLocation(location + 1)}>...</FancyButton>])
+        setAnswers(currentLocation.choices(choiceProps))
       }
     }
   }, [location, doingBattle, level])
@@ -216,7 +216,7 @@ const App = ({
     endBattle(false)
     setName('')
     setGil(0)
-    setLocation(0)
+    setLocation('intro1')
     setText('')
     setDoingBattle(false)
     localStorage.setItem('mathDragonName', '');      
@@ -302,6 +302,7 @@ const ConnectedApp = connect(
       dispatch({ type: 'LOCATION_SET', value })
     },
     setName: value => {
+console.log(value);
       dispatch({ type: 'PLAYER_NAME_SET', value })
       localStorage.setItem('mathDragonName', value);      
     },
