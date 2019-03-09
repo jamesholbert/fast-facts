@@ -207,7 +207,7 @@ const App = ({
           : [<FancyButton key={1} onClick={() => setLocation(location + 1)}>...</FancyButton>])
       }
     }
-  }, [location, doingBattle])
+  }, [location, doingBattle, level])
 
   const logout = () => {
     endBattle(false)
