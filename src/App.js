@@ -108,7 +108,7 @@ const App = ({
   const endBattle = victory => {
     setText(victory ? 'Nice job! Here\'s some gil as a reward!'  : 'Nice try!! Maybe next time!')
     if(victory){
-      setGil(gil+((5*(level*level)) || 1))
+      setGil(gil+((5*(level)) || 1))
       if(level === 10){
         setDragonsDefeated(dragonsDefeated+1)
       }
@@ -219,6 +219,7 @@ const App = ({
     setLocation('intro1')
     setText('')
     setDoingBattle(false)
+    setDragonsDefeated(0)
     localStorage.setItem('mathDragonName', '');      
   }
 
