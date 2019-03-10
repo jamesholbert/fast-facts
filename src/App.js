@@ -45,8 +45,10 @@ const App = ({
   currentAnswers, setCurrentChat, setCurrentAnswers, damage, dragonsDefeated,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
   dealDamage, location, setLocation, setName, playerName, gil, setGil, level, 
-  setDragonsDefeated, playerSpeed, playerMultiplier, setPlayerSpeed, setPlayerMultiplier
+  setDragonsDefeated, playerSpeed, playerMultiplier, setPlayerSpeed, setPlayerMultiplier,
+  setSavedPlayers, savedPlayers
 }) => {
+console.log(savedPlayers);
   const [ doingBattle, setDoingBattle ] = useState()
   const [ currentBar, setCurrentBar ] = useState(0)
   const [ multiplier, setMultiplier ] = useState(0)
@@ -90,8 +92,11 @@ const App = ({
       setLocation('intro2')
       setName(name)
     }
-    else{
-      setLocation('intro1')
+    else {
+      const oldPlayers = gameData ? Object.keys(gameData) : []
+      console.log(oldPlayers)
+      setSavedPlayers(oldPlayers)
+      setLocation('intro0')
     }
   }
 
@@ -210,9 +215,9 @@ const App = ({
         ])
       }
       else { // for navigating
-        const choiceProps = {setCurrentBar, setMathType, setLocation, resetBaddieHp, 
+        const choiceProps = { setCurrentBar, setMathType, setLocation, resetBaddieHp, 
           setDoingBattle, setDelay, level, gil, setGil, setPlayerMultiplier, playerMultiplier,
-          setPlayerSpeed, playerSpeed}
+          setPlayerSpeed, playerSpeed, savedPlayers, enterName }
 
         setAnswers(currentLocation.choices(choiceProps))
       }
@@ -223,7 +228,7 @@ const App = ({
     endBattle(false)
     setName('')
     setGil(0)
-    setLocation('intro1')
+    setLocation('intro0')
     setText('')
     setDoingBattle(false)
     setDragonsDefeated(0)
@@ -293,7 +298,8 @@ const ConnectedApp = connect(
     playerName: FromStore.playerName(state),
     level: FromStore.playerLevel(state),
     gil: FromStore.gil(state),
-    dragonsDefeated: FromStore.dragonsDefeated(state)
+    dragonsDefeated: FromStore.dragonsDefeated(state),
+    savedPlayers: FromStore.savedPlayers(state)
   }),
   dispatch => ({
     setMathType: value => {
@@ -334,6 +340,9 @@ const ConnectedApp = connect(
     },
     setPlayerMultiplier: value => {
       dispatch({ type: 'PLAYER_MULTIPLIER_SET', value })
+    },
+    setSavedPlayers: value => {
+      dispatch({ type: 'SAVED_PLAYERS_SET', value })
     }
   })
 )(App)

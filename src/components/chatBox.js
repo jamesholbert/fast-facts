@@ -44,6 +44,8 @@ const Avatar = styled.img`
 `
 
 const ChatBox = ({ avatar, choices, children }) => {
+	const answerColumns = choices.length > 5 ? 5 : choices.length
+	const textColumns = choices.length > 5 ? 4 : 9 - choices.length
 	return <FancyDiv>
 		<Grid numColumns={10}>
 			{avatar && 
@@ -51,7 +53,7 @@ const ChatBox = ({ avatar, choices, children }) => {
 					<Avatar src={raylaUrl} />
 				</Cell>
 			}
-			<Cell span={9 - choices.length}>
+			<Cell span={textColumns}>
 				<Typist 
 					avgTypingDelay={10} 
 					startDelay={100} 
@@ -61,7 +63,7 @@ const ChatBox = ({ avatar, choices, children }) => {
 					{children}
 				</Typist>
 			</Cell>
-			<Cell span={choices.length}>{choices}</Cell>
+			<Cell span={answerColumns}><Grid numColumns={answerColumns}>{choices}</Grid></Cell>
 		</Grid>
 	</FancyDiv>
 }

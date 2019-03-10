@@ -25,7 +25,8 @@ const rootReducer = combineReducers({
 	currentAnswers: compose(withPrefixedAction('CURRENT_ANSWERS'), withDefault([]))(primitiveReducer),
 	damage: withPrefixedAction('DAMAGE')(primitiveReducer),
 	location: compose(withPrefixedAction('LOCATION'), withDefault('intro1'))(primitiveReducer),
-	dragonsDefeated: compose(withPrefixedAction('DRAGONS_DEFEATED'), withDefault(0))(primitiveReducer)
+	dragonsDefeated: compose(withPrefixedAction('DRAGONS_DEFEATED'), withDefault(0))(primitiveReducer),
+	savedPlayers: compose(withPrefixedAction('SAVED_PLAYERS'), withDefault([]))(primitiveReducer)
 });
 
 export default rootReducer;
@@ -47,3 +48,4 @@ export const gil = store => store.player.gil
 export const dragonsDefeated = store => store.dragonsDefeated
 export const playerSpeed = store => store.player.speed
 export const playerMultiplier = store => store.player.multiplier
+export const savedPlayers = store => store.savedPlayers

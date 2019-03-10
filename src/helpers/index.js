@@ -200,10 +200,23 @@ const buttonsForLocations = (choiceArray, setLocation) => choiceArray.map((choic
 </FancyButton>)
 
 export const gameStates = {
+	intro0: {
+		text: "Hello! What's your name?",
+		choices: ({ enterName, savedPlayers, setLocation }) => {
+console.log(savedPlayers);
+			const resumePlayers = savedPlayers ? savedPlayers.map(player=><FancyButton
+				onClick={()=>enterName(player)}
+			>
+				{player}
+			</FancyButton>) : []
+
+			return [...resumePlayers, ...buttonsForLocations([{location: 'intro1', text: 'new'}], setLocation)]
+		}
+	},
 	intro1: {
 		text: "Hello! What's your name?", 
 		input: 'name',
-		inputTarget: 'intro2' 
+		inputTarget: 'intro2'
 	},
 	intro2: {
 		text: name => ('Nice to meet you, ' + name + '. Great to have you.'),
