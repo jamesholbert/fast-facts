@@ -15,6 +15,7 @@ export const mathChoices = [
 	{
 		symbol: '+',
 		type: 'add',
+		gilMultiplier: 1,
 		calculation: (a,b)=>a+b,
 		reference: '+',
 		levels: [
@@ -49,13 +50,15 @@ export const mathChoices = [
 				range: 20,
 				url: 'http://dragon-mania-legends-wiki.mobga.me/images/7/72/Carnival_Dragon.png',
 				name: 'Pythonagorus',
-				delay: 40
+				delay: 40,
+				baddieHp: 2000
 			}
 		]
 	},
 	{
 		symbol: '-',
 		type: 'subtract',
+		gilMultiplier: 2,
 		calculation: (a,b)=>a-b,
 		reference: '-',
 		levels: [
@@ -93,13 +96,15 @@ export const mathChoices = [
 				range: 20,
 				url: 'http://www.pngall.com/wp-content/uploads/2016/06/Chinese-Dragon-PNG.png',
 				name: 'Brahmagupta',
-				delay: 40
+				delay: 40,
+				baddieHp: 3
 			}
 		]
 	},
 	{
 		symbol: 'x',
 		type: 'multiply',
+		gilMultiplier: 4,
 		calculation: (a,b)=>a*b,
 		reference: 'x',
 		levels: [
@@ -134,7 +139,8 @@ export const mathChoices = [
 				range: 20,
 				url: 'https://vignette.wikia.nocookie.net/overlordmaruyama/images/c/cb/PDL_Profile.png/revision/latest?cb=20181004225837',
 				name: 'Pascal Blaze',
-				delay: 40
+				delay: 40,
+				baddieHp: 4000
 			}
 		]
 	}
@@ -213,7 +219,10 @@ export const gameStates = {
 	},
 	intro5: {
 		text: "Will you help us?", 
-		choices: ({ setLocation }) => buttonsForLocations([{'location': 'intro6', text: 'Yes'}, {'location': 'intro6', text: 'No'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([
+			{'location': 'intro6', text: 'No'},
+			{'location': 'intro6', text: 'Yes'}, 
+		], setLocation)
 	},
 	intro6: {
 		text: "You probably aren't strong enough yet to take them on.",
@@ -221,27 +230,81 @@ export const gameStates = {
 	},
 	intro7: {
 		text: "So you'll need to train, and take on a few smaller opponents before then.",
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'chooseMathType'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation)
+	},
+	welcomeBack: {
+		text: name => `Welcome back ${name}!`,
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation)
+	},
+	town: {
+		text: "Where would you like to go?",
+		choices: ({ setLocation }) => buttonsForLocations([
+			{location: 'store', text: 'Store'},
+			{location: 'chooseMathType', text: 'Battle'}, 
+		], setLocation)
 	},
 	chooseMathType: {
 		text: "What type of math do you want to battle?", 
-		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level }) => mathChoices.map(mathType => {
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level, setLocation, playerSpeed }) => {
+			const backToTown = buttonsForLocations([
+				{location: 'town', text: 'Back'},
+			], setLocation)
 
-			const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
+			return [...backToTown, ...mathChoices.map(mathType => {
+				const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
+				return <FancyButton 
+					key={mathType.type+level}
+					onClick={()=>{
+						setMathType(mathType)
+						setDoingBattle(true)
+						resetBaddieHp(levelOptions.baddieHp || 1000)
+						if(levelOptions.delay){
+							setDelay(levelOptions.delay + playerSpeed * 2)
+						}
+					}}
+				>
+					{mathType.symbol}
+				</FancyButton>
+			})]
+		}
+	},
+	store: {
+		text: 'What would you like to upgrade?',
+		choices: ({ gil, setGil, setPlayerMultiplier, playerMultiplier,
+          setPlayerSpeed, playerSpeed, setLocation }) => {
+			const backToTown = buttonsForLocations([
+				{location: 'town', text: 'Back'},
+			], setLocation)
 
-			return <FancyButton 
-				key={mathType.type+level}
-				onClick={()=>{
-					setMathType(mathType)
-					setDoingBattle(true)
-					resetBaddieHp(levelOptions.baddieHp || 1000)
-					if(levelOptions.delay){
-						setDelay(levelOptions.delay)
-					}
-				}}
-			>
-				{mathType.symbol}
-			</FancyButton>
-		})
+			const speedCost = (playerSpeed + 1)*(playerSpeed >= 10 ? 100 : 50)
+			const swordCost = (playerMultiplier + 1)*(playerMultiplier >= 10 ? 100 : 50)
+
+			let upgrades = [backToTown]
+			upgrades.push(
+				<FancyButton 
+					disabled={speedCost>gil} 
+					key='speed'
+					onClick={()=>{
+						setPlayerSpeed(playerSpeed+1)
+						setGil(gil-speedCost)
+					}}
+				>
+					Speed ({speedCost})
+				</FancyButton>
+			)
+			upgrades.push(
+				<FancyButton 
+					disabled={swordCost>gil} 
+					key='multiplier'
+					onClick={()=>{
+						setPlayerMultiplier(playerMultiplier+1)
+						setGil(gil-swordCost)
+					}}
+				>
+						Sword ({swordCost})
+				</FancyButton>
+			)
+			return upgrades
+		}
 	}
 }

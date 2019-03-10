@@ -25,14 +25,14 @@ const FancyDiv = styled.div`
 export const FancyButton = styled.button`
 	border: solid 1px yellow;
 	border-radius: 5px;
-	background: black;
+	background: ${props => props.disabled ? 'grey' : 'black'};
 	color: yellow;
 	padding: 10px;
 	width: 100px;
 	min-height: 50%;
 	font-size: 15px;
 	margin: 0 15px;
-	cursor: pointer;
+	cursor: ${props => props.disabled ? '' : 'pointer'};
 `
 
 const Avatar = styled.img`

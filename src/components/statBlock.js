@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import styled from 'styled-components'
 
@@ -26,16 +26,29 @@ const NameContainer = styled.div`
 const StatContainer = styled.div`
 	width: 100%;
 	font-size: 20px;
-	margin-top: 20px;
+	margin: 15px;
 `
 
-const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, onSave }) => {
+const TextContainer = styled.span`
+	color: white;
+`
+
+const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, onSave, playerMultiplier, playerSpeed }) => {
+	const [ saved, setSaved] = useState(false)
+
+	const saveClick = () => {
+		setSaved(true)
+		setTimeout(()=>setSaved(false), 2000)
+	}
+
 	return name && <Container>
 		<NameContainer>{name}</NameContainer>
 		<LevelSelector {...{doingBattle}} />
 		<StatContainer>Gil: {gil}</StatContainer>
+		<StatContainer>Sword level: {playerMultiplier}</StatContainer>
+		<StatContainer>Speed level: {playerSpeed}</StatContainer>
 		<StatContainer>Dragons Defeated: {dragonsDefeated}</StatContainer>
-		<ChoiceContainer onClick={onSave}>Save</ChoiceContainer>
+		<ChoiceContainer onClick={()=>{onSave();saveClick();}}>Save</ChoiceContainer> {saved && <TextContainer>Saved!</TextContainer>}
 	</Container>
 }
 

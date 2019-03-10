@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import styled from 'styled-components';
 
-import Grid, { Cell } from './grid'
+import Grid from './grid'
 
 import * as FromStore from '../reducers'
 
@@ -73,6 +73,7 @@ const LevelSelector = ({ level, maxLevel, onSelect, doingBattle }) => {
 		return <Container
 			onClick={()=>doingBattle ? {} : setOpen(true)}
 			doingBattle={doingBattle}
+			disabled={doingBattle}
 		>
 			Level {level}
 		</Container>

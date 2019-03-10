@@ -4,8 +4,6 @@ import styled from 'styled-components'
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 
-import { baitUrl } from '../helpers'
-
 const Container = styled.div`
 	position: fixed;
 	height: ${props => props.isDragon ? '70%' : '100px'};
@@ -14,10 +12,8 @@ const Container = styled.div`
 `
 
 const BaddieImg = styled.img`
-	// width: ${props => props.isDragon ? 'auto' : '200px'};
 	height: 100%;
 	width: auto;
-	// height: ${props => props.isDragon ? '80%' : 'auto'};
 
 `
 

@@ -13,9 +13,11 @@ const Container = styled.div`
 
 const SwordImage = styled.img`
 	height: 100%;
+	transform: scale(${props => props.percent});
+	filter: ${props => props.sepia ? 'sepia(100%)' : 'none'};
 `
 
-const Sword = ({ left }) => <Container style={{left}}><SwordImage src={swordUrl} /></Container>
+const Sword = ({ left, percent, sepia }) => <Container style={{left}}><SwordImage sepia={sepia} percent={percent} src={swordUrl} /></Container>
 Sword.defaultProps = {
 	left: '20px'
 }

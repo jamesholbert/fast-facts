@@ -5,14 +5,16 @@ import primitiveReducer from './primitive';
 import { withPrefixedAction, withDefault } from './utils';
 
 const rootReducer = combineReducers({
-	level: compose(withPrefixedAction('LEVEL'), withDefault(1))(primitiveReducer),
 	maxLevel: compose(withPrefixedAction('MAX_LEVEL'), withDefault(3))(primitiveReducer),
-	gil: compose(withPrefixedAction('GIL'), withDefault(0))(primitiveReducer),
 	mathType: withPrefixedAction('MATH_TYPE')(primitiveReducer),
 	player: combineReducers({
+		gil: compose(withPrefixedAction('GIL'), withDefault(0))(primitiveReducer),
+		level: compose(withPrefixedAction('LEVEL'), withDefault(2))(primitiveReducer),
 		name: withPrefixedAction('PLAYER_NAME')(primitiveReducer),
 		hp: compose(withPrefixedAction('PLAYER_HP'), withDefault(100))(primitiveReducer),
-		maxHp: compose(withPrefixedAction('PLAYER_MAX_HP'), withDefault(100))(primitiveReducer)
+		maxHp: compose(withPrefixedAction('PLAYER_MAX_HP'), withDefault(100))(primitiveReducer),
+		speed: compose(withPrefixedAction('PLAYER_SPEED'), withDefault(0))(primitiveReducer),
+		multiplier: compose(withPrefixedAction('PLAYER_MULTIPLIER'), withDefault(0))(primitiveReducer),
 	}),
 	baddie: combineReducers({
 		name: withPrefixedAction('BADDIE_NAME')(primitiveReducer),
@@ -39,7 +41,9 @@ export const currentChat = store => store.currentChat
 export const currentAnswers = store => store.currentAnswers
 export const damage = store => store.damage
 export const location = store => store.location
-export const playerLevel = store => store.level
+export const playerLevel = store => store.player.level
 export const maxLevel = store => store.maxLevel
-export const gil = store => store.gil
+export const gil = store => store.player.gil
 export const dragonsDefeated = store => store.dragonsDefeated
+export const playerSpeed = store => store.player.speed
+export const playerMultiplier = store => store.player.multiplier

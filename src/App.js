@@ -44,7 +44,8 @@ const EnterButton = styled.button`
 const App = ({ 
   currentAnswers, setCurrentChat, setCurrentAnswers, damage, dragonsDefeated,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
-  dealDamage, location, setLocation, setName, playerName, gil, setGil, level, setDragonsDefeated
+  dealDamage, location, setLocation, setName, playerName, gil, setGil, level, 
+  setDragonsDefeated, playerSpeed, playerMultiplier, setPlayerSpeed, setPlayerMultiplier
 }) => {
   const [ doingBattle, setDoingBattle ] = useState()
   const [ currentBar, setCurrentBar ] = useState(0)
@@ -81,7 +82,9 @@ const App = ({
       setName(playerName)
       setGil(gameData[playerName].gil)
       setDragonsDefeated(gameData[playerName].dragonsDefeated)
-      setLocation('chooseMathType')
+      setPlayerMultiplier(gameData[playerName].playerMultiplier || 0)
+      setPlayerSpeed(gameData[playerName].playerSpeed || 0)
+      setLocation('welcomeBack')
     }
     else if(name){
       setLocation('intro2')
@@ -100,22 +103,25 @@ const App = ({
     gameData[playerName] = {
       level,
       gil,
-      dragonsDefeated
+      dragonsDefeated,
+      playerMultiplier,
+      playerSpeed
     }
     localStorage.setItem('mathDragons', JSON.stringify(gameData))
   }
 
   const endBattle = victory => {
-    setText(victory ? 'Nice job! Here\'s some gil as a reward!'  : 'Nice try!! Maybe next time!')
+    const reward = victory ? ((5*(level*mathType.gilMultiplier)) || 1) : 0
+    setText(victory ? `Nice job ${playerName}! Here's ${reward} gil as a reward!`  : 'Nice try!! Maybe next time!')
     if(victory){
-      setGil(gil+((5*(level)) || 1))
+      setGil(gil+reward)
       if(level === 10){
         setDragonsDefeated(dragonsDefeated+1)
       }
     }
     setAnswers([])
     setMathType(null)
-    setLocation('chooseMathType')
+    setLocation('town')
     setMathType(null)
     setTimerIsOn(false)
     setCurrentBar(0)
@@ -145,11 +151,11 @@ const App = ({
 
   // set Chat and Choices to battle things
   useEffect(()=>{
-    if(doingBattle && multiplier === 0 && baddieHp > 0 && mathType){
+    if(doingBattle && multiplier - (playerMultiplier * .1) <= 0 && baddieHp > 0 && mathType){
       // Do the math things
       const current = getMathQuestion(mathType, level)
 
-      setMultiplier(3)
+      setMultiplier(3 + (playerMultiplier * .1))
       setCurrentBar(100)
 
       setText(current.question)
@@ -164,7 +170,7 @@ const App = ({
             setMultiplier(0) // at the moment this causes a reset at "Set Chat and Choices"
           }
           else {
-            if(multiplierRef.current === 1){
+            if(multiplierRef.current - (playerMultiplier * .1) === 1){
               endBattle(false)
             }
             else {
@@ -197,20 +203,21 @@ const App = ({
         }
       }
 
-      if(currentLocation.input){
+      if(currentLocation.input){ // for entering name
         setAnswers([
           <EnterButton key={0} onClick={() => enterName(nameRef.current.value)}>enter</EnterButton>,
           <NameInput key={1} type='text' ref={nameRef} onKeyPress={handleKeyPress} maxLength={15} />
         ])
       }
-      else {
+      else { // for navigating
         const choiceProps = {setCurrentBar, setMathType, setLocation, resetBaddieHp, 
-          setDoingBattle, setDelay, level}
+          setDoingBattle, setDelay, level, gil, setGil, setPlayerMultiplier, playerMultiplier,
+          setPlayerSpeed, playerSpeed}
 
         setAnswers(currentLocation.choices(choiceProps))
       }
     }
-  }, [location, doingBattle, level])
+  }, [location, doingBattle, level, gil])
 
   const logout = () => {
     endBattle(false)
@@ -220,19 +227,27 @@ const App = ({
     setText('')
     setDoingBattle(false)
     setDragonsDefeated(0)
+    setPlayerSpeed(0)
+    setPlayerMultiplier(0)
     localStorage.setItem('mathDragonName', '');      
   }
 
   let swords = []
   for (let i=0;i<multiplier;i++){
+    const percent = multiplier - i < 1 ? multiplier - i : 1
     const left = i*60 + 300
-    swords.push(<Sword key={i} left={left} />)
+    const bonusSword = 1 + i + (playerMultiplier * .1) > multiplier
+    swords.push(<Sword key={i} left={left} percent={percent} sepia={bonusSword} />)
   }
   const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
     <Container>
-      <StatBlock name={playerName} {...{level, gil, dragonsDefeated, doingBattle}} onSave={save} />
+      <StatBlock 
+        name={playerName} 
+        onSave={save} 
+        {...{level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed}} 
+      />
       {swords}
       {doingBattle && <Baddie 
         name={baddieName} 
@@ -255,7 +270,7 @@ const App = ({
           {text}
         </ChatBox>
       }
-      {damage && <BigText text={damage} right />}
+      {damage && <BigText text={Math.round(damage)} right />}
       {victory && <BigText text='You win!' top='0%' />}
     </Container>
   )
@@ -266,6 +281,8 @@ export { App };
 
 const ConnectedApp = connect(
   state => ({
+    playerSpeed: FromStore.playerSpeed(state),
+    playerMultiplier: FromStore.playerMultiplier(state),
     mathType: FromStore.mathType(state),
     baddieHp: FromStore.baddieHp(state),
     baddieMaxHp: FromStore.baddieMaxHp(state),
@@ -303,7 +320,6 @@ const ConnectedApp = connect(
       dispatch({ type: 'LOCATION_SET', value })
     },
     setName: value => {
-console.log(value);
       dispatch({ type: 'PLAYER_NAME_SET', value })
       localStorage.setItem('mathDragonName', value);      
     },
@@ -312,6 +328,12 @@ console.log(value);
     },
     setDragonsDefeated: value => {
       dispatch({ type: 'DRAGONS_DEFEATED_SET', value })
+    },
+    setPlayerSpeed: value => {
+      dispatch({ type: 'PLAYER_SPEED_SET', value })
+    },
+    setPlayerMultiplier: value => {
+      dispatch({ type: 'PLAYER_MULTIPLIER_SET', value })
     }
   })
 )(App)
