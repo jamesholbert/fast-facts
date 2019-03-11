@@ -97,7 +97,7 @@ export const mathChoices = [
 				url: 'http://www.pngall.com/wp-content/uploads/2016/06/Chinese-Dragon-PNG.png',
 				name: 'Brahmagupta',
 				delay: 40,
-				baddieHp: 3
+				baddieHp: 3000
 			}
 		]
 	},
