@@ -28,7 +28,8 @@ export const FancyButton = styled.button`
 	background: ${props => props.disabled ? 'grey' : 'black'};
 	color: yellow;
 	padding: 10px;
-	width: 100px;
+	min-width: 100px;
+	// min-width: 100px;
 	min-height: 50%;
 	font-size: 15px;
 	margin: 0 15px;

@@ -104,7 +104,7 @@ export const mathChoices = [
 	{
 		symbol: 'x',
 		type: 'multiply',
-		gilMultiplier: 4,
+		gilMultiplier: 6,
 		calculation: (a,b)=>a*b,
 		reference: 'x',
 		levels: [
@@ -159,7 +159,7 @@ export const getMathQuestion = ({ calculation, reference, levels }, level) => {
 	return {
 		question: first + ' ' + reference + ' ' + second + ' =',
 		correctAnswer: calculation(first, second),
-		answers: shuffle([
+		answers: shuffleArray([
 			calculation(first, second),
 			calculation(first, second - 1),
 			calculation(first, second + 1),
@@ -173,7 +173,7 @@ const getRandomNumber = range => Math.floor(Math.random() * (range - 2)) + 2
 
 const getTwoRandomNumbers = range => [getRandomNumber(range), getRandomNumber(range)]
 
-const shuffle = array => {
+const shuffleArray = array => {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
@@ -203,7 +203,6 @@ export const gameStates = {
 	intro0: {
 		text: "Hello! What's your name?",
 		choices: ({ enterName, savedPlayers, setLocation }) => {
-console.log(savedPlayers);
 			const resumePlayers = savedPlayers ? savedPlayers.map(player=><FancyButton
 				onClick={()=>enterName(player)}
 			>
@@ -256,6 +255,12 @@ console.log(savedPlayers);
 			{location: 'chooseMathType', text: 'Battle'}, 
 		], setLocation)
 	},
+	upgradeHelp: {
+		text: "Speed gives you more time to solve a problem, and Sword adds to your damage.",
+		choices: ({ setLocation }) => buttonsForLocations([
+			{location: 'town', text: 'Back'},
+		], setLocation)
+	},
 	chooseMathType: {
 		text: "What type of math do you want to battle?", 
 		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level, setLocation, playerSpeed }) => {
@@ -285,14 +290,20 @@ console.log(savedPlayers);
 		text: 'What would you like to upgrade?',
 		choices: ({ gil, setGil, setPlayerMultiplier, playerMultiplier,
           setPlayerSpeed, playerSpeed, setLocation }) => {
-			const backToTown = buttonsForLocations([
+			let upgrades = buttonsForLocations([
 				{location: 'town', text: 'Back'},
+				{location: 'upgradeHelp', text: 'Help'},
 			], setLocation)
 
-			const speedCost = (playerSpeed + 1)*(playerSpeed >= 10 ? 100 : 50)
-			const swordCost = (playerMultiplier + 1)*(playerMultiplier >= 10 ? 100 : 50)
+			const getCostMultiplier = level => {
+				if(level <= 5){return 20}
+				if(level > 5){return 100}
+				return 50
+			}
+			const speedCost = (playerSpeed + 1)*getCostMultiplier(playerSpeed)
+			const swordCost = (playerMultiplier + 1)*getCostMultiplier(playerMultiplier)
 
-			let upgrades = [backToTown]
+			// let upgrades = backToTown
 			upgrades.push(
 				<FancyButton 
 					disabled={speedCost>gil} 

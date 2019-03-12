@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
 	mathType: withPrefixedAction('MATH_TYPE')(primitiveReducer),
 	player: combineReducers({
 		gil: compose(withPrefixedAction('GIL'), withDefault(0))(primitiveReducer),
-		level: compose(withPrefixedAction('LEVEL'), withDefault(2))(primitiveReducer),
+		level: compose(withPrefixedAction('LEVEL'), withDefault(1))(primitiveReducer),
 		name: withPrefixedAction('PLAYER_NAME')(primitiveReducer),
 		hp: compose(withPrefixedAction('PLAYER_HP'), withDefault(100))(primitiveReducer),
 		maxHp: compose(withPrefixedAction('PLAYER_MAX_HP'), withDefault(100))(primitiveReducer),
@@ -26,7 +26,9 @@ const rootReducer = combineReducers({
 	damage: withPrefixedAction('DAMAGE')(primitiveReducer),
 	location: compose(withPrefixedAction('LOCATION'), withDefault('intro1'))(primitiveReducer),
 	dragonsDefeated: compose(withPrefixedAction('DRAGONS_DEFEATED'), withDefault(0))(primitiveReducer),
-	savedPlayers: compose(withPrefixedAction('SAVED_PLAYERS'), withDefault([]))(primitiveReducer)
+	savedPlayers: compose(withPrefixedAction('SAVED_PLAYERS'), withDefault([]))(primitiveReducer),
+	windowWidth: compose(withPrefixedAction('WINDOW_WIDTH'), withDefault(0))(primitiveReducer),
+	windowHeight: compose(withPrefixedAction('WINDOW_HEIGHT'), withDefault(0))(primitiveReducer)
 });
 
 export default rootReducer;
@@ -49,3 +51,5 @@ export const dragonsDefeated = store => store.dragonsDefeated
 export const playerSpeed = store => store.player.speed
 export const playerMultiplier = store => store.player.multiplier
 export const savedPlayers = store => store.savedPlayers
+export const windowWidth = store => store.windowWidth
+export const windowHeight = store => store.windowHeight

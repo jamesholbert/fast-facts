@@ -10,6 +10,7 @@ import LogoutButton from './components/logout'
 import Sword from './components/sword'
 import Baddie from './components/baddie'
 import StatBlock from './components/statBlock'
+import WindowListener from './components/windowListener'
 
 import { backgrounds, getMathQuestion, gameStates } from './helpers'
 import { useInterval } from './customHooks'
@@ -18,7 +19,7 @@ import * as FromStore from './reducers'
 
 const Container = styled.div`
   background-image: url(${backgrounds.countrySide});
-  height: ${window.innerHeight}px;
+  height: ${props => props.windowHeight}px;
   width: auto;
   background-size: cover;
   background-repeat: no-repeat;
@@ -46,9 +47,8 @@ const App = ({
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
   dealDamage, location, setLocation, setName, playerName, gil, setGil, level, 
   setDragonsDefeated, playerSpeed, playerMultiplier, setPlayerSpeed, setPlayerMultiplier,
-  setSavedPlayers, savedPlayers
+  setSavedPlayers, savedPlayers, ...props
 }) => {
-console.log(savedPlayers);
   const [ doingBattle, setDoingBattle ] = useState()
   const [ currentBar, setCurrentBar ] = useState(0)
   const [ multiplier, setMultiplier ] = useState(0)
@@ -247,7 +247,7 @@ console.log(savedPlayers);
   const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
-    <Container>
+    <Container windowHeight={props.windowHeight}>
       <StatBlock 
         name={playerName} 
         onSave={save} 
@@ -277,6 +277,7 @@ console.log(savedPlayers);
       }
       {damage && <BigText text={Math.round(damage)} right />}
       {victory && <BigText text='You win!' top='0%' />}
+      <WindowListener />
     </Container>
   )
 }
@@ -299,7 +300,8 @@ const ConnectedApp = connect(
     level: FromStore.playerLevel(state),
     gil: FromStore.gil(state),
     dragonsDefeated: FromStore.dragonsDefeated(state),
-    savedPlayers: FromStore.savedPlayers(state)
+    savedPlayers: FromStore.savedPlayers(state),
+    windowHeight: FromStore.windowHeight(state)
   }),
   dispatch => ({
     setMathType: value => {
