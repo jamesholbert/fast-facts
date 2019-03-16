@@ -12,7 +12,7 @@ import Baddie from './components/baddie'
 import StatBlock from './components/statBlock'
 import WindowListener from './components/windowListener'
 
-import { backgrounds, getMathQuestion, gameStates, npcUrls } from './helpers'
+import { backgrounds, getMathQuestion, gameStates, npcUrls, imageDimensions } from './helpers'
 import { useInterval } from './customHooks'
 
 import * as FromStore from './reducers'
@@ -43,7 +43,7 @@ const EnterButton = styled.button`
 `
 
 const App = ({ 
-  currentAnswers, setCurrentChat, setCurrentAnswers, damage, dragonsDefeated,
+  damage, dragonsDefeated,
   setMathType, mathType, setBaddieHp, resetBaddieHp, baddieHp, baddieMaxHp, 
   dealDamage, location, setLocation, setName, playerName, gil, setGil, level, 
   setDragonsDefeated, playerSpeed, playerMultiplier, setPlayerSpeed, setPlayerMultiplier,
@@ -79,6 +79,8 @@ const App = ({
   const load = (name = '') => {
     const playerName = name ? name : localStorage.getItem('mathDragonName');
     const gameData = JSON.parse(localStorage.getItem('mathDragons'));
+    const oldPlayers = gameData ? Object.keys(gameData) : []
+    setSavedPlayers(oldPlayers)
 
     if(playerName && gameData && gameData[playerName]){
       setName(playerName)
@@ -93,17 +95,12 @@ const App = ({
       setName(name)
     }
     else {
-      const oldPlayers = gameData ? Object.keys(gameData) : []
-      console.log(oldPlayers)
-      setSavedPlayers(oldPlayers)
       setLocation('intro0')
     }
   }
 
   const save = () => {
-    let gameData = localStorage.getItem('mathDragons')
-
-    gameData = gameData ? JSON.parse(gameData) : {}
+    const gameData = JSON.parse(localStorage.getItem('mathDragons')) || {};
 
     gameData[playerName] = {
       level,
@@ -113,6 +110,9 @@ const App = ({
       playerSpeed
     }
     localStorage.setItem('mathDragons', JSON.stringify(gameData))
+    
+    const oldPlayers = gameData ? Object.keys(gameData) : []
+    setSavedPlayers(oldPlayers)
   }
 
   const endBattle = victory => {
@@ -254,15 +254,16 @@ const App = ({
         {...{level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed}} 
       />
       {swords}
-      {doingBattle && <Baddie 
+      <Baddie
+        doingBattle={doingBattle}
         name={baddieName} 
         url={url} 
         hp={baddieHp} 
         maxHp={baddieMaxHp} 
         defeated={baddieHp < 1} 
         right={currentBar <= 0 && baddieHp > 0} 
-        isBoss={level === 10}
-      />}
+        dimensions={imageDimensions[level === 10 ? 'boss' : 'smallFry']}
+      />
       {playerName && <LogoutButton onClick={logout} />}
       {timerIsOn && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />
@@ -292,8 +293,6 @@ const ConnectedApp = connect(
     mathType: FromStore.mathType(state),
     baddieHp: FromStore.baddieHp(state),
     baddieMaxHp: FromStore.baddieMaxHp(state),
-    currentChat: FromStore.currentChat(state),
-    currentAnswers: FromStore.currentAnswers(state),
     damage: FromStore.damage(state),
     location: FromStore.location(state),
     playerName: FromStore.playerName(state),
@@ -313,12 +312,6 @@ const ConnectedApp = connect(
     resetBaddieHp: value => {
       dispatch({ type: 'BADDIE_HP_SET', value })
       dispatch({ type: 'BADDIE_MAX_HP_SET', value })
-    },
-    setCurrentChat: value => {
-      dispatch({ type: 'CURRENT_CHAT_SET', value })
-    },
-    setCurrentAnswers: value => {
-      dispatch({ type: 'CURRENT_ANSWERS_SET', value })
     },
     dealDamage: value => {
       dispatch({ type: 'DAMAGE_SET', value })

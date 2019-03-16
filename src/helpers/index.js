@@ -304,7 +304,7 @@ export const gameStates = {
 		text: 'What would you like to upgrade?',
 		choices: ({ gil, setGil, setPlayerMultiplier, playerMultiplier,
           setPlayerSpeed, playerSpeed, setLocation }) => {
-			let upgrades = buttonsForLocations([
+			let upgradeButtons = buttonsForLocations([
 				{location: 'town', text: 'Back'},
 				{location: 'upgradeHelp', text: 'Help'},
 			], setLocation)
@@ -317,8 +317,8 @@ export const gameStates = {
 			const speedCost = (playerSpeed + 1)*getCostMultiplier(playerSpeed)
 			const swordCost = (playerMultiplier + 1)*getCostMultiplier(playerMultiplier)
 
-			// let upgrades = backToTown
-			upgrades.push(
+			// let upgradeButtons = backToTown
+			upgradeButtons.push(
 				<FancyButton 
 					disabled={speedCost>gil} 
 					key='speed'
@@ -330,7 +330,7 @@ export const gameStates = {
 					Speed ({speedCost})
 				</FancyButton>
 			)
-			upgrades.push(
+			upgradeButtons.push(
 				<FancyButton 
 					disabled={swordCost>gil} 
 					key='multiplier'
@@ -342,7 +342,24 @@ export const gameStates = {
 						Sword ({swordCost})
 				</FancyButton>
 			)
-			return upgrades
+			return upgradeButtons
 		}
+	}
+}
+
+export const imageDimensions = {
+	boss: {
+		height: '65%',
+		width: '50%',
+		left: '60%',
+		lifeBarRight: '15px',
+		bottom: '20%'
+	},
+	smallFry: {
+		height: '30%',
+		width: '25%',
+		left: '70%',
+		lifeBarRight: '10%',
+		bottom: '25%'
 	}
 }
