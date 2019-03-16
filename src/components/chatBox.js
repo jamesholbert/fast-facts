@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Typist from 'react-typist'
 
 import Grid, { Cell } from './grid'
-import { raylaUrl } from '../helpers'
+import { npcUrls } from '../helpers'
 
 const FancyDiv = styled.div`
 	background-color: black;
@@ -51,7 +51,7 @@ const ChatBox = ({ avatar, choices, children }) => {
 		<Grid numColumns={10}>
 			{avatar && 
 				<Cell>
-					<Avatar src={raylaUrl} />
+					<Avatar src={avatar} />
 				</Cell>
 			}
 			<Cell span={textColumns}>
@@ -67,6 +67,9 @@ const ChatBox = ({ avatar, choices, children }) => {
 			<Cell span={answerColumns}><Grid numColumns={answerColumns}>{choices}</Grid></Cell>
 		</Grid>
 	</FancyDiv>
+}
+ChatBox.defaultProps = {
+	avatar: npcUrls.rayla
 }
 export default ChatBox
 

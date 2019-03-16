@@ -12,7 +12,7 @@ import Baddie from './components/baddie'
 import StatBlock from './components/statBlock'
 import WindowListener from './components/windowListener'
 
-import { backgrounds, getMathQuestion, gameStates } from './helpers'
+import { backgrounds, getMathQuestion, gameStates, npcUrls } from './helpers'
 import { useInterval } from './customHooks'
 
 import * as FromStore from './reducers'
@@ -269,7 +269,7 @@ const App = ({
       }
       {text && 
         <ChatBox
-          avatar={!mathType}
+          avatar={!mathType && npcUrls[gameStates[location].npc]}
           choices={answers}
         >
           {text}

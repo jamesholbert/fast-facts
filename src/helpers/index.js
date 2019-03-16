@@ -9,7 +9,12 @@ export const backgrounds = {
 
 export const swordUrl = 'http://vignette4.wikia.nocookie.net/elderscrolls/images/2/2e/Glass_sword.png/revision/latest?cb=20121012151804'
 export const baitUrl = 'https://vignette.wikia.nocookie.net/dragonprince/images/7/7a/BaitFull.png/revision/latest?cb=20180916191227'
-export const raylaUrl = 'https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716'
+
+export const npcUrls = {
+	rayla: 'https://vignette.wikia.nocookie.net/dragonprince/images/0/09/Rayla_Official.png/revision/latest/scale-to-width-down/161?cb=20180916011716',
+	callum: 'https://vignette.wikia.nocookie.net/dragonprince/images/4/4e/Callum_Official.png/revision/latest?cb=20180916011714',
+	amaya: 'https://thedragonprince.com/wp-content/uploads/2019/01/general-Amaya.png'
+}
 
 export const mathChoices = [
 	{
@@ -210,43 +215,51 @@ export const gameStates = {
 			</FancyButton>) : []
 
 			return [...resumePlayers, ...buttonsForLocations([{location: 'intro1', text: 'new'}], setLocation)]
-		}
+		},
+		npc: 'callum'
 	},
 	intro1: {
 		text: "Hello! What's your name?", 
 		input: 'name',
-		inputTarget: 'intro2'
+		inputTarget: 'intro2',
+		npc: 'callum'
 	},
 	intro2: {
 		text: name => ('Nice to meet you, ' + name + '. Great to have you.'),
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro3'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro3'}], setLocation),
+		npc: 'callum'
 	},
 	intro3: {
 		text: "We need your help! There are Math Breathing Dragons threatening our kingdom.",
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro4'}], setLocation)		
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro4'}], setLocation),
+		npc: 'callum'
 	},
 	intro4: {
 		text: "Our strongest fighters weren't trained to parry math attacks, so they keep failing.",
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro5'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro5'}], setLocation),
+		npc: 'callum'
 	},
 	intro5: {
 		text: "Will you help us?", 
 		choices: ({ setLocation }) => buttonsForLocations([
 			{'location': 'intro6', text: 'No'},
 			{'location': 'intro6', text: 'Yes'}, 
-		], setLocation)
+		], setLocation),
+		npc: 'callum'
 	},
 	intro6: {
 		text: "You probably aren't strong enough yet to take them on.",
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro7'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'intro7'}], setLocation),
+		npc: 'callum'
 	},
 	intro7: {
 		text: "So you'll need to train, and take on a few smaller opponents before then.",
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation),
+		npc: 'callum'
 	},
 	welcomeBack: {
 		text: name => `Welcome back ${name}!`,
-		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation)
+		choices: ({ setLocation }) => buttonsForLocations([{location: 'town'}], setLocation),
 	},
 	town: {
 		text: "Where would you like to go?",
@@ -287,6 +300,7 @@ export const gameStates = {
 		}
 	},
 	store: {
+		npc: 'amaya',
 		text: 'What would you like to upgrade?',
 		choices: ({ gil, setGil, setPlayerMultiplier, playerMultiplier,
           setPlayerSpeed, playerSpeed, setLocation }) => {
