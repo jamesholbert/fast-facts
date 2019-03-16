@@ -261,7 +261,7 @@ const App = ({
         maxHp={baddieMaxHp} 
         defeated={baddieHp < 1} 
         right={currentBar <= 0 && baddieHp > 0} 
-        isDragon={level === 10}
+        isBoss={level === 10}
       />}
       {playerName && <LogoutButton onClick={logout} />}
       {timerIsOn && 
