@@ -16,6 +16,19 @@ export const npcUrls = {
 	amaya: 'https://thedragonprince.com/wp-content/uploads/2019/01/general-Amaya.png'
 }
 
+export const checkTallerThanWide = ({target: {offsetHeight, offsetWidth}}) => console.log(offsetHeight, offsetWidth) || offsetHeight > offsetWidth
+
+export const dynamicHeight = ({ tallerThanWide, dimensions }) => {
+	if(tallerThanWide === 'unset'){return '100%'}
+	if(tallerThanWide){return dimensions.height}
+	return 'auto'
+}
+export const dynamicWidth = ({ tallerThanWide, dimensions }) => {
+	if(tallerThanWide === 'unset'){return 'auto'}
+	if(tallerThanWide){return 'auto'}
+	return dimensions.height
+}
+
 export const mathChoices = [
 	{
 		symbol: '+',
@@ -350,6 +363,7 @@ export const gameStates = {
 export const imageDimensions = {
 	boss: {
 		height: '65%',
+		maxHeightNum: .8,
 		width: '50%',
 		left: '60%',
 		lifeBarRight: '15px',
@@ -357,6 +371,7 @@ export const imageDimensions = {
 	},
 	smallFry: {
 		height: '30%',
+		maxHeightNum: .45,
 		width: '25%',
 		left: '70%',
 		lifeBarRight: '10%',

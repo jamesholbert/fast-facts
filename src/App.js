@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { connect } from 'react-redux'
 
 import styled from 'styled-components'
@@ -61,12 +61,14 @@ const App = ({
   const multiplierRef = useRef(multiplier)
   const nameRef = useRef()
 
+  // custom hook to handle the battle timer
   useInterval(() => {
     if(timerIsOn){
       setCurrentBar(currentBar => currentBar - 1)
     }
   }, timerIsOn ? delay : null);
 
+  // Make sure damage multiplier is up to date with current click
   useEffect(()=>{
     multiplierRef.current = multiplier
   }, [multiplier])
@@ -76,6 +78,7 @@ const App = ({
     load()
   }, [])
 
+  // user level methods
   const load = (name = '') => {
     const playerName = name ? name : localStorage.getItem('mathDragonName');
     const gameData = JSON.parse(localStorage.getItem('mathDragons'));
@@ -115,6 +118,19 @@ const App = ({
     setSavedPlayers(oldPlayers)
   }
 
+  const logout = () => {
+    endBattle(false)
+    setName('')
+    setGil(0)
+    setLocation('intro0')
+    setText('')
+    setDoingBattle(false)
+    setDragonsDefeated(0)
+    setPlayerSpeed(0)
+    setPlayerMultiplier(0)
+    localStorage.setItem('mathDragonName', '');      
+  }
+
   const endBattle = victory => {
     const reward = victory ? ((5*(level*mathType.gilMultiplier)) || 1) : 0
     setText(victory ? `Nice job ${playerName}! Here's ${reward} gil as a reward!`  : 'Nice try!! Maybe next time!')
@@ -140,34 +156,38 @@ const App = ({
     setTimeout(()=>setVictory(false), 2000)
   }
 
-  useEffect(()=>{ // once a battle begins, this should be the first thing ran
+  // checked every time interval during battle
+  useEffect(()=>{
     currentBarRef.current = currentBar
     if(doingBattle && baddieHp > 0 && !timerIsOn && mathType){
+      // once a battle begins, this should be the first thing ran
       setTimerIsOn(true)
       setCurrentBar(100)
     }
     else if(timerIsOn && currentBar <= 0){
+      // defeat
       endBattle(false)
     } 
     else if(timerIsOn && baddieHp <= 0){
+      // victory
       endBattle(true)
     }
   }, [currentBar, doingBattle])
 
-  // set Chat and Choices to battle things
+  // Battle text and choices (only at the beginning of combat and when you click)
   useEffect(()=>{
     if(doingBattle && multiplier - (playerMultiplier * .1) <= 0 && baddieHp > 0 && mathType){
-      // Do the math things
-      const current = getMathQuestion(mathType, level)
+      // set choices
+      const currentQuestion = getMathQuestion(mathType, level)
 
       setMultiplier(3 + (playerMultiplier * .1))
       setCurrentBar(100)
 
-      setText(current.question)
-      setAnswers(current.answers.map(answer => <FancyButton
+      setText(currentQuestion.question)
+      setAnswers(currentQuestion.answers.map(answer => <FancyButton
         key={answer}
         onClick={()=>{
-          if(answer === current.correctAnswer){
+          if(answer === currentQuestion.correctAnswer){
             const damage = currentBarRef.current * multiplierRef.current
             dealDamage(damage)
 
@@ -189,7 +209,7 @@ const App = ({
     }
   }, [multiplier, doingBattle])
 
-  // set Chat and Choices
+  // Out of battle Text and Choices
   useEffect(()=>{
     if(!doingBattle){
       // Narration
@@ -224,19 +244,6 @@ const App = ({
     }
   }, [location, doingBattle, level, gil])
 
-  const logout = () => {
-    endBattle(false)
-    setName('')
-    setGil(0)
-    setLocation('intro0')
-    setText('')
-    setDoingBattle(false)
-    setDragonsDefeated(0)
-    setPlayerSpeed(0)
-    setPlayerMultiplier(0)
-    localStorage.setItem('mathDragonName', '');      
-  }
-
   let swords = []
   for (let i=0;i<multiplier;i++){
     const percent = multiplier - i < 1 ? multiplier - i : 1
@@ -244,6 +251,7 @@ const App = ({
     const bonusSword = 1 + i + (playerMultiplier * .1) > multiplier
     swords.push(<Sword key={i} left={left} percent={percent} sepia={bonusSword} />)
   }
+  const Swords = () => <Fragment>{swords}</Fragment>
   const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
@@ -253,29 +261,30 @@ const App = ({
         onSave={save} 
         {...{level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed}} 
       />
-      {swords}
-      <Baddie
-        doingBattle={doingBattle}
-        name={baddieName} 
-        url={url} 
-        hp={baddieHp} 
-        maxHp={baddieMaxHp} 
-        defeated={baddieHp < 1} 
-        right={currentBar <= 0 && baddieHp > 0} 
-        dimensions={imageDimensions[level === 10 ? 'boss' : 'smallFry']}
-      />
-      {playerName && <LogoutButton onClick={logout} />}
+      <Swords />
+      {doingBattle && 
+        <Baddie
+          {...{doingBattle}}
+          windowHeight={props.windowHeight}
+          name={baddieName} 
+          url={url} 
+          hp={baddieHp} 
+          maxHp={baddieMaxHp} 
+          defeated={baddieHp < 1} 
+          right={currentBar <= 0 && baddieHp > 0} 
+          dimensions={imageDimensions[level === 10 ? 'boss' : 'smallFry']}
+        />
+      }
+      <LogoutButton name={playerName} onClick={logout} />
       {timerIsOn && 
         <GrowthBar percent={currentBar} onTimeout={()=>{}} />
       }
-      {text && 
-        <ChatBox
+      <ChatBox
           avatar={!mathType && npcUrls[gameStates[location].npc]}
           choices={answers}
         >
-          {text}
-        </ChatBox>
-      }
+        {text}
+      </ChatBox>
       {damage && <BigText text={Math.round(damage)} right />}
       {victory && <BigText text='You win!' top='0%' />}
       <WindowListener />

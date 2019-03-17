@@ -13,6 +13,6 @@ const Container = styled.button`
 	padding: 10px;
 `
 
-const LogoutButton = ({ onClick }) => <Container onClick={onClick}>Logout</Container>
+const LogoutButton = ({ onClick, name }) => !name ? <span/> : <Container onClick={onClick}>Logout</Container>
 
 export default LogoutButton

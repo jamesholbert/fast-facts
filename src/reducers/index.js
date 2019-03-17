@@ -21,8 +21,6 @@ const rootReducer = combineReducers({
 		hp: compose(withPrefixedAction('BADDIE_HP'), withDefault(0))(primitiveReducer),
 		maxHp: compose(withPrefixedAction('BADDIE_MAX_HP'), withDefault(100))(primitiveReducer)
 	}),
-	currentChat: withPrefixedAction('CURRENT_CHAT')(primitiveReducer),
-	currentAnswers: compose(withPrefixedAction('CURRENT_ANSWERS'), withDefault([]))(primitiveReducer),
 	damage: withPrefixedAction('DAMAGE')(primitiveReducer),
 	location: compose(withPrefixedAction('LOCATION'), withDefault('intro1'))(primitiveReducer),
 	dragonsDefeated: compose(withPrefixedAction('DRAGONS_DEFEATED'), withDefault(0))(primitiveReducer),
@@ -40,8 +38,6 @@ export const playermaxHp = store => store.player.maxHp
 export const baddieName = store => store.baddie.name
 export const baddieHp = store => store.baddie.hp
 export const baddieMaxHp = store => store.baddie.maxHp
-export const currentChat = store => store.currentChat
-export const currentAnswers = store => store.currentAnswers
 export const damage = store => store.damage
 export const location = store => store.location
 export const playerLevel = store => store.player.level
