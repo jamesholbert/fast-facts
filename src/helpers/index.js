@@ -16,7 +16,7 @@ export const npcUrls = {
 	amaya: 'https://thedragonprince.com/wp-content/uploads/2019/01/general-Amaya.png'
 }
 
-export const checkTallerThanWide = ({target: {offsetHeight, offsetWidth}}) => console.log(offsetHeight, offsetWidth) || offsetHeight > offsetWidth
+export const checkTallerThanWide = ({target: {offsetHeight, offsetWidth}}) => offsetHeight > offsetWidth
 
 export const dynamicHeight = ({ tallerThanWide, dimensions }) => {
 	if(tallerThanWide === 'unset'){return '100%'}
