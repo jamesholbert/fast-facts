@@ -4,19 +4,20 @@ import styled from 'styled-components'
 import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 
-import { checkTallerThanWide, dynamicHeight, dynamicWidth } from '../helpers'
-
 const Container = styled.div`
 	position: fixed;
 	transition-duration: 1s;
 	bottom: ${props => props.defeated ? '-200%' : props.dimensions.bottom};
-	height: ${props => dynamicHeight(props)}
-	width: ${props => dynamicWidth(props)}
+	height: ${props=>props.height}px;
+	width: auto;
 `
 
 const BaddieImg = styled.img`
-	height: ${props=>props.tallerThanWide ? 'auto' : '100%'};
-	width: ${props=>!props.tallerThanWide ? 'auto' : '100%'};
+	max-height: ${props=>props.maxHeight}px;
+	height: auto;
+	width: auto;
+	bottom: 0px;
+	position: absolute;
 `
 
 const LifeBarContainer = styled.div`
@@ -54,12 +55,11 @@ const Baddie = ({ defeated, hp, maxHp, right, url, name, dimensions, doingBattle
 	return <Fragment>
 		<Container 
 			{...{tallerThanWide, dimensions, defeated, style}} 
+			height={windowHeight*dimensions.heightRatio}
 		>
 			<BaddieImg 
 				src={url}
-				style={{maxHeight: windowHeight*dimensions.maxHeightNum}}
-				tallerThanWide={tallerThanWide !== 'unset' && tallerThanWide}
-				onLoad={t=>setTallerThanWide(checkTallerThanWide(t))}
+				maxHeight={windowHeight*dimensions.heightRatio}
 			/>
 		</Container>
 		<LifeBarContainer width={healthBarWidth} right={dimensions.lifeBarRight}>
