@@ -48,7 +48,6 @@ const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, onSave, pla
 		<StatContainer>Sword level: {playerMultiplier}</StatContainer>
 		<StatContainer>Speed level: {playerSpeed}</StatContainer>
 		<StatContainer>Dragons Defeated: {dragonsDefeated}</StatContainer>
-		<ChoiceContainer onClick={()=>{onSave();saveClick();}}>Save</ChoiceContainer> {saved && <TextContainer>Saved!</TextContainer>}
 	</Container>
 }
 

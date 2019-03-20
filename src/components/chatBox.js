@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import styled from 'styled-components'
 import Typist from 'react-typist'
@@ -14,12 +14,13 @@ const FancyDiv = styled.div`
 	box-shadow: inset 0 -1px 0 0 lightgrey, inset 0 1px 0 0 lightgrey, 0 1px 0 0 lightgrey, 0 -1px 0 0 lightgrey;
 	margin-bottom: 1px;
 	width: 100%;
-	padding: 25px 0;
-	font-size: 25px;
+	padding: ${props=>props.mobileView ? '5px 0' : '25px 0'};
+	font-size: ${props=>props.mobileView ? '15px' : '25px'};
 	text-align: center;
 	position: fixed;
-	bottom: 20px;
-	height: 70px;
+	bottom: ${props=>props.mobileView ? '0' : '20px'};
+	height: ${props=>props.mobileView ? '100px' : '70px'};
+	overflow: auto;
 `
 
 export const FancyButton = styled.button`
@@ -28,8 +29,7 @@ export const FancyButton = styled.button`
 	background: ${props => props.disabled ? 'grey' : 'black'};
 	color: yellow;
 	padding: 10px;
-	min-width: 100px;
-	// min-width: 100px;
+	min-width: ${props=>props.mobileView ? '40px' : '100px'};
 	min-height: 50%;
 	font-size: 15px;
 	margin: 0 15px;
@@ -37,37 +37,43 @@ export const FancyButton = styled.button`
 `
 
 const Avatar = styled.img`
-	height: 450%;
-	width: auto;
+	height: ${props=>props.mobileView ? '200px' : '550px'};
 	position: absolute
-	bottom: -200px;
+	bottom: ${props=>props.mobileView ? '100px' : '-200px'};
 	left: 10px;
+	z-index: 100;
 `
 
-const ChatBox = ({ avatar, choices, children }) => {
+const ChatBox = ({ avatar, choices, children, mobileView }) => {
 	if(!children){return <span />}
 	const answerColumns = choices.length > 5 ? 5 : choices.length
-	const textColumns = choices.length > 5 ? 4 : 9 - choices.length
-	return <FancyDiv>
-		<Grid numColumns={10}>
-			{avatar && 
-				<Cell>
-					<Avatar src={avatar} />
+	const textColumns = choices.length > 5 ? 4 : 8 - choices.length
+
+	return <Fragment>
+		<Avatar 
+			src={avatar} 
+			mobileView={mobileView}
+		/>
+		<FancyDiv mobileView={mobileView}>
+			<Grid
+				numColumns={mobileView ? 6 : 10}
+				gap={mobileView ? '5px' : '15px'}
+			>
+				{!mobileView && <Cell span={2}/>}
+				<Cell span={mobileView ? 6 : textColumns}>
+					<Typist 
+						avgTypingDelay={10} 
+						startDelay={100} 
+						cursor={{show: false}}
+						key={children}
+					>
+						{children}
+					</Typist>
 				</Cell>
-			}
-			<Cell span={textColumns}>
-				<Typist 
-					avgTypingDelay={10} 
-					startDelay={100} 
-					cursor={{show: false}}
-					key={children}
-				>
-					{children}
-				</Typist>
-			</Cell>
-			<Cell span={answerColumns}><Grid numColumns={answerColumns}>{choices}</Grid></Cell>
-		</Grid>
-	</FancyDiv>
+				{choices}
+			</Grid>
+		</FancyDiv>
+	</Fragment>
 }
 ChatBox.defaultProps = {
 	avatar: npcUrls.rayla

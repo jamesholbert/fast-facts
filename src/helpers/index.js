@@ -1,6 +1,8 @@
 import React from 'react'
 import { FancyButton } from '../components/chatBox'
 
+import { Cell } from '../components/grid'
+
 export const backgrounds = {
   sky: 'https://cdna2.artstation.com/p/assets/images/images/000/176/778/large/didier-konings-july-2014-didier-konings-skyship-cove.jpg?1408748863',
   countrySide: 'https://i.pinimg.com/originals/f5/c3/09/f5c30922330d28afb4406ad245ea50bb.jpg',
@@ -22,7 +24,6 @@ export const imageDimensions = {
 		width: '50%',
 		left: '60%',
 		lifeBarRight: '15px',
-		bottom: '20%',
 		heightRatio: .7
 	},
 	smallFry: {
@@ -30,7 +31,6 @@ export const imageDimensions = {
 		width: '25%',
 		left: '70%',
 		lifeBarRight: '10%',
-		bottom: '25%',
 		heightRatio: .45
 	}
 }
@@ -216,12 +216,15 @@ const shuffleArray = array => {
   return array;
 }
 
-const buttonsForLocations = (choiceArray, setLocation) => choiceArray.map((choice, i)=><FancyButton
-	key={i}
-	onClick={()=>setLocation(choice.location)}
->
-	{choice.text || 'next'}
-</FancyButton>)
+const buttonsForLocations = (choiceArray, setLocation, mobileView = false) => choiceArray.map((choice, i)=><Cell span={mobileView ? 2 : 1}>
+	<FancyButton
+		// mobileView={mobileView}
+		key={i}
+		onClick={()=>setLocation(choice.location)}
+	>
+		{choice.text || 'next'}
+	</FancyButton>
+</Cell>)
 
 export const gameStates = {
 	intro0: {
@@ -295,14 +298,15 @@ export const gameStates = {
 	},
 	chooseMathType: {
 		text: "What type of math do you want to battle?", 
-		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level, setLocation, playerSpeed }) => {
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level, setLocation, playerSpeed, mobileView }) => {
 			const backToTown = buttonsForLocations([
 				{location: 'town', text: 'Back'},
 			], setLocation)
 
 			return [...backToTown, ...mathChoices.map(mathType => {
 				const levelOptions = mathType.levels.filter(l=>level===l.level)[0]
-				return <FancyButton 
+				return <FancyButton
+					mobileView={mobileView}
 					key={mathType.type+level}
 					onClick={()=>{
 						setMathType(mathType)
@@ -322,11 +326,12 @@ export const gameStates = {
 		npc: 'amaya',
 		text: 'What would you like to upgrade?',
 		choices: ({ gil, setGil, setPlayerMultiplier, playerMultiplier,
-          setPlayerSpeed, playerSpeed, setLocation }) => {
-			let upgradeButtons = buttonsForLocations([
+          setPlayerSpeed, playerSpeed, setLocation, mobileView }) => {
+			let upgradeButtons = []
+			const otherButtons = buttonsForLocations([
 				{location: 'town', text: 'Back'},
 				{location: 'upgradeHelp', text: 'Help'},
-			], setLocation)
+			], setLocation, mobileView)
 
 			const getCostMultiplier = level => {
 				if(level <= 5){return 20}
@@ -338,7 +343,7 @@ export const gameStates = {
 
 			// let upgradeButtons = backToTown
 			upgradeButtons.push(
-				<FancyButton 
+				<Cell span={mobileView ? 2 : 1}><FancyButton 
 					disabled={speedCost>gil} 
 					key='speed'
 					onClick={()=>{
@@ -347,10 +352,10 @@ export const gameStates = {
 					}}
 				>
 					Speed ({speedCost})
-				</FancyButton>
+				</FancyButton></Cell>
 			)
 			upgradeButtons.push(
-				<FancyButton 
+				<Cell span={mobileView ? 2 : 1}><FancyButton 
 					disabled={swordCost>gil} 
 					key='multiplier'
 					onClick={()=>{
@@ -359,9 +364,9 @@ export const gameStates = {
 					}}
 				>
 						Sword ({swordCost})
-				</FancyButton>
+				</FancyButton></Cell>
 			)
-			return upgradeButtons
+			return [...upgradeButtons, ...otherButtons]
 		}
 	}
 }

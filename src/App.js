@@ -20,10 +20,11 @@ import * as FromStore from './reducers'
 const Container = styled.div`
   background-image: url(${backgrounds.countrySide});
   height: ${props => props.windowHeight}px;
-  width: auto;
+  width: ${props => props.windowWidth}px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  position: fixed;
 `
 
 const NameInput = styled.input`
@@ -60,6 +61,7 @@ const App = ({
   const currentBarRef = useRef(currentBar)
   const multiplierRef = useRef(multiplier)
   const nameRef = useRef()
+  const mobileView = props.windowWidth < 1000
 
   // custom hook to handle the battle timer
   useInterval(() => {
@@ -156,6 +158,12 @@ const App = ({
     setTimeout(()=>setVictory(false), 2000)
   }
 
+  useEffect(()=>{
+    if(victory === false && playerName){
+      save()
+    }
+  }, [victory])
+
   // checked every time interval during battle
   useEffect(()=>{
     currentBarRef.current = currentBar
@@ -185,6 +193,7 @@ const App = ({
 
       setText(currentQuestion.question)
       setAnswers(currentQuestion.answers.map(answer => <FancyButton
+        mobileView={mobileView}
         key={answer}
         onClick={()=>{
           if(answer === currentQuestion.correctAnswer){
@@ -237,7 +246,7 @@ const App = ({
       else { // for navigating
         const choiceProps = { setCurrentBar, setMathType, setLocation, resetBaddieHp, 
           setDoingBattle, setDelay, level, gil, setGil, setPlayerMultiplier, playerMultiplier,
-          setPlayerSpeed, playerSpeed, savedPlayers, enterName }
+          setPlayerSpeed, playerSpeed, savedPlayers, enterName, mobileView }
 
         setAnswers(currentLocation.choices(choiceProps))
       }
@@ -255,7 +264,7 @@ const App = ({
   const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
-    <Container windowHeight={props.windowHeight}>
+    <Container windowHeight={props.windowHeight} windowWidth={props.windowWidth}>
       <StatBlock 
         name={playerName} 
         onSave={save} 
@@ -282,6 +291,7 @@ const App = ({
       <ChatBox
           avatar={!mathType && npcUrls[gameStates[location].npc]}
           choices={answers}
+          mobileView={mobileView}
         >
         {text}
       </ChatBox>
@@ -309,7 +319,8 @@ const ConnectedApp = connect(
     gil: FromStore.gil(state),
     dragonsDefeated: FromStore.dragonsDefeated(state),
     savedPlayers: FromStore.savedPlayers(state),
-    windowHeight: FromStore.windowHeight(state)
+    windowHeight: FromStore.windowHeight(state),
+    windowWidth: FromStore.windowWidth(state)
   }),
   dispatch => ({
     setMathType: value => {

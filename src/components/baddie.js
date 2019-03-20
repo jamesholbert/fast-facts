@@ -7,7 +7,7 @@ import "react-sweet-progress/lib/style.css";
 const Container = styled.div`
 	position: fixed;
 	transition-duration: 1s;
-	bottom: ${props => props.defeated ? '-200%' : props.dimensions.bottom};
+	bottom: ${props => props.defeated ? '-200%' : '175px'};
 	height: ${props=>props.height}px;
 	width: auto;
 `
@@ -24,7 +24,7 @@ const LifeBarContainer = styled.div`
 	position: fixed;
 	right: ${props=>props.right};
 	width: ${props=>props.width};
-	bottom: 20%;
+	bottom: 150px;
 	font-size: 30px;
 `
 
