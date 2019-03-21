@@ -204,7 +204,8 @@ const App = ({
             setMultiplier(0) // at the moment this causes a reset at "Set Chat and Choices"
           }
           else {
-            if(multiplierRef.current - (playerMultiplier * .1) === 1){
+            if(multiplierRef.current - (playerMultiplier * .1) <= 1.05){
+            // if(multiplierRef.current - (playerMultiplier * .1) === 1){
               endBattle(false)
             }
             else {
@@ -256,16 +257,17 @@ const App = ({
   let swords = []
   for (let i=0;i<multiplier;i++){
     const percent = multiplier - i < 1 ? multiplier - i : 1
-    const left = i*60 + 300
+    const left = mobileView ? i * 25 + 170 : i * 60 + 300
     const bonusSword = 1 + i + (playerMultiplier * .1) > multiplier
-    swords.push(<Sword key={i} left={left} percent={percent} sepia={bonusSword} />)
+    swords.push(<Sword mobileView={mobileView} key={i} left={left} percent={percent} sepia={bonusSword} />)
   }
   const Swords = () => <Fragment>{swords}</Fragment>
   const { url, name: baddieName } = mathType ? mathType.levels.filter(l=>level===l.level)[0] : {}
 
   return (
     <Container windowHeight={props.windowHeight} windowWidth={props.windowWidth}>
-      <StatBlock 
+      <StatBlock
+        mobileView={mobileView}
         name={playerName} 
         onSave={save} 
         {...{level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed}} 
@@ -274,6 +276,7 @@ const App = ({
       {doingBattle && 
         <Baddie
           {...{doingBattle}}
+          mobileView={mobileView}
           windowHeight={props.windowHeight}
           name={baddieName} 
           url={url} 
@@ -295,8 +298,18 @@ const App = ({
         >
         {text}
       </ChatBox>
-      {damage && <BigText text={Math.round(damage)} right />}
-      {victory && <BigText text='You win!' top='0%' />}
+      {damage && <BigText
+          mobileView={mobileView}
+          text={Math.round(damage)} 
+          right
+        />
+      }
+      {victory && <BigText
+          mobileView={mobileView}
+          text='You win!' 
+          top='10%' 
+        />
+      }
       <WindowListener />
     </Container>
   )

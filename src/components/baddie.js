@@ -14,7 +14,7 @@ const Container = styled.div`
 
 const BaddieImg = styled.img`
 	max-height: ${props=>props.maxHeight}px;
-	height: auto;
+	height: ${props=>props.mobileView ? props.maxHeight+'px' : 'auto'};
 	width: auto;
 	bottom: 0px;
 	position: absolute;
@@ -28,46 +28,47 @@ const LifeBarContainer = styled.div`
 	font-size: 30px;
 `
 
-const Baddie = ({ defeated, hp, maxHp, right, url, name, dimensions, doingBattle, windowHeight, damaged }) => {
+const Baddie = ({ defeated, hp, maxHp, right, url, name, dimensions, doingBattle, windowHeight, damaged, mobileView }) => {
 	if(!doingBattle){return <span />}
 	const [ left, setLeft ] = useState('150%')
-	const [ tallerThanWide, setTallerThanWide ] = useState('unset')
 	const [ healthBarWidth, setHealthBarWidth ] = useState('100px')
 
 	useEffect(()=>{
 		setTimeout(()=>{
-			setLeft(dimensions.left)
+			setLeft(mobileView ? '50%' : dimensions.left)
 			setHealthBarWidth(dimensions.width)
 		}, 5)
 	}, [])
 
-	useEffect(()=>{
+	useEffect(()=>{ // hurt animation
 		if(hp < maxHp){
 			setLeft('100%')
 			setTimeout(()=>{
-				setLeft(dimensions.left)
+				setLeft(mobileView ? '50%' : dimensions.left)
 			}, 100)
 		}
 	}, [hp])
 
+	const height= windowHeight * dimensions.heightRatio * (mobileView ? .75 : 1)
 	const style = right ? {left: '150%'} : {left}
 	
 	return <Fragment>
 		<Container 
-			{...{tallerThanWide, dimensions, defeated, style}} 
-			height={windowHeight*dimensions.heightRatio}
+			{...{dimensions, defeated, style}} 
+			height={height}
 		>
 			<BaddieImg 
+				mobileView={mobileView}
 				src={url}
-				maxHeight={windowHeight*dimensions.heightRatio}
+				maxHeight={height}
 			/>
 		</Container>
-		<LifeBarContainer width={healthBarWidth} right={dimensions.lifeBarRight}>
+		{hp>maxHp && <LifeBarContainer width={healthBarWidth} right={dimensions.lifeBarRight}>
 			{name}
 			<Progress 
 				percent={Math.round(hp/maxHp*100)}
 			/>
-		</LifeBarContainer>
+		</LifeBarContainer>}
 	</Fragment>
 }
 Baddie.defaultProps = {

@@ -291,9 +291,10 @@ export const gameStates = {
 		], setLocation)
 	},
 	upgradeHelp: {
+		npc: 'amaya',
 		text: "Speed gives you more time to solve a problem, and Sword adds to your damage.",
 		choices: ({ setLocation }) => buttonsForLocations([
-			{location: 'town', text: 'Back'},
+			{location: 'store', text: 'Back'},
 		], setLocation)
 	},
 	chooseMathType: {
