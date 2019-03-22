@@ -111,7 +111,8 @@ export const mathChoices = [
 			},
 			{
 				level: 3,
-				range: 12,
+				range: 15,
+				enforcePositive: true,
 				url: 'https://gamepedia.cursecdn.com/dragalialost_gamepedia_en/thumb/4/44/210050_01_portrait.png/400px-210050_01_portrait.png?version=f2a96b6f284b74d117651d19b8e94977',
 				name: 'Roc'
 			},
@@ -120,6 +121,7 @@ export const mathChoices = [
 				range: 20,
 				url: 'http://www.pngall.com/wp-content/uploads/2016/06/Chinese-Dragon-PNG.png',
 				name: 'Brahmagupta',
+				enforcePositive: true,
 				delay: 40,
 				baddieHp: 3000
 			}
@@ -160,7 +162,7 @@ export const mathChoices = [
 			},
 			{
 				level: 10,
-				range: 20,
+				range: 15,
 				url: 'https://vignette.wikia.nocookie.net/overlordmaruyama/images/c/cb/PDL_Profile.png/revision/latest?cb=20181004225837',
 				name: 'Pascal Blaze',
 				delay: 40,
