@@ -37,7 +37,7 @@ export const FancyButton = styled.button`
 `
 
 const Avatar = styled.img`
-	height: ${props=>props.mobileView ? '150px' : '550px'};
+	height: ${props=>props.mobileView ? '45%' : '550px'};
 	position: absolute
 	bottom: ${props=>props.mobileView ? '100px' : '-200px'};
 	left: 10px;
