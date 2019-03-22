@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import styled from 'styled-components'
 
-import LevelSelector, { ChoiceContainer } from './levelSelector'
+import LevelSelector from './levelSelector'
 
 const Container = styled.div`
 	position: fixed;
@@ -29,26 +29,13 @@ const StatContainer = styled.div`
 	margin: ${props=>props.mobileView ? '5px' : '15px'};
 `
 
-const TextContainer = styled.span`
-	color: white;
-`
-
-const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, onSave, playerMultiplier, playerSpeed, mobileView }) => {
-	const [ saved, setSaved] = useState(false)
-
-	const saveClick = () => {
-		setSaved(true)
-		setTimeout(()=>setSaved(false), 2000)
-	}
-
-	return name && <Container>
-		<NameContainer mobileView={mobileView}>{name}</NameContainer>
-		<LevelSelector {...{doingBattle}} />
-		<StatContainer mobileView={mobileView}>Gil: {gil}</StatContainer>
-		<StatContainer mobileView={mobileView}>Sword level: {playerMultiplier}</StatContainer>
-		<StatContainer mobileView={mobileView}>Speed level: {playerSpeed}</StatContainer>
-		<StatContainer mobileView={mobileView}>Dragons Defeated: {dragonsDefeated}</StatContainer>
-	</Container>
-}
+const StatBlock = ({ name, level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed, mobileView }) => name && <Container>
+	<NameContainer mobileView={mobileView}>{name}</NameContainer>
+	<LevelSelector {...{doingBattle}} />
+	<StatContainer mobileView={mobileView}>Gil: {gil}</StatContainer>
+	<StatContainer mobileView={mobileView}>Sword level: {playerMultiplier}</StatContainer>
+	<StatContainer mobileView={mobileView}>Speed level: {playerSpeed}</StatContainer>
+	<StatContainer mobileView={mobileView}>Dragons Defeated: {dragonsDefeated}</StatContainer>
+</Container>
 
 export default StatBlock

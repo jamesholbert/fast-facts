@@ -268,8 +268,7 @@ const App = ({
     <Container windowHeight={props.windowHeight} windowWidth={props.windowWidth}>
       <StatBlock
         mobileView={mobileView}
-        name={playerName} 
-        onSave={save} 
+        name={playerName}
         {...{level, gil, dragonsDefeated, doingBattle, playerMultiplier, playerSpeed}} 
       />
       <Swords />

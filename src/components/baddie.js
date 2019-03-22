@@ -63,7 +63,7 @@ const Baddie = ({ defeated, hp, maxHp, right, url, name, dimensions, doingBattle
 				maxHeight={height}
 			/>
 		</Container>
-		{hp>maxHp && <LifeBarContainer width={healthBarWidth} right={dimensions.lifeBarRight}>
+		{hp > 0 && <LifeBarContainer width={healthBarWidth} right={dimensions.lifeBarRight}>
 			{name}
 			<Progress 
 				percent={Math.round(hp/maxHp*100)}

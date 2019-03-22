@@ -170,14 +170,12 @@ export const mathChoices = [
 	}
 ]
 
-const swapFirstAndSecond = (first, second) => ([second, first])
-
 export const getMathQuestion = ({ calculation, reference, levels }, level) => {
 	const levelOptions = levels.filter(l=>level===l.level)[0]
 	
 	let [ first, second ] = getTwoRandomNumbers(levelOptions.range)
 	if(first < second && levelOptions.enforcePositive){
-		[ first, second ] = swapFirstAndSecond(first, second)
+		[ first, second ] = [second, first]
 	}
 
 	return {
@@ -199,32 +197,25 @@ const getTwoRandomNumbers = range => [getRandomNumber(range), getRandomNumber(ra
 
 const shuffleArray = array => {
   var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
   while (0 !== currentIndex) {
-
-    // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex -= 1;
 
-    // And swap it with the current element.
     temporaryValue = array[currentIndex];
     array[currentIndex] = array[randomIndex];
     array[randomIndex] = temporaryValue;
   }
-
   return array;
 }
 
-const buttonsForLocations = (choiceArray, setLocation, mobileView = false) => choiceArray.map((choice, i)=><Cell span={mobileView ? 2 : 1}>
-	<FancyButton
-		// mobileView={mobileView}
-		key={i}
-		onClick={()=>setLocation(choice.location)}
-	>
-		{choice.text || 'next'}
-	</FancyButton>
-</Cell>)
+const buttonsForLocations = (choiceArray, setLocation, mobileView = false) => choiceArray.map((choice, i)=>(
+	<Cell key={i} span={mobileView ? 2 : 1}>
+		<FancyButton
+			onClick={()=>setLocation(choice.location)}
+		>
+			{choice.text || 'next'}
+		</FancyButton>
+	</Cell>))
 
 export const gameStates = {
 	intro0: {

@@ -46,12 +46,11 @@ const Avatar = styled.img`
 
 const ChatBox = ({ avatar, choices, children, mobileView }) => {
 	if(!children){return <span />}
-	const answerColumns = choices.length > 5 ? 5 : choices.length
 	const textColumns = choices.length > 5 ? 4 : 8 - choices.length
 
 	return <Fragment>
 		<Avatar 
-			src={avatar} 
+			src={avatar || undefined} 
 			mobileView={mobileView}
 		/>
 		<FancyDiv mobileView={mobileView}>
