@@ -292,7 +292,7 @@ export const gameStates = {
 	},
 	chooseMathType: {
 		text: "What type of math do you want to battle?", 
-		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setLevel, setDelay, level, setLocation, playerSpeed, mobileView }) => {
+		choices: ({ setMathType, resetBaddieHp, setDoingBattle, setDelay, level, setLocation, playerSpeed, mobileView }) => {
 			const backToTown = buttonsForLocations([
 				{location: 'town', text: 'Back'},
 			], setLocation)
