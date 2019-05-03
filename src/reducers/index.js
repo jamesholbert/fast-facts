@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
 	mathType: withPrefixedAction('MATH_TYPE')(primitiveReducer),
 	player: combineReducers({
 		gil: compose(withPrefixedAction('GIL'), withDefault(0))(primitiveReducer),
-		level: compose(withPrefixedAction('LEVEL'), withDefault(1))(primitiveReducer),
+		level: compose(withPrefixedAction('LEVEL'), withDefault(2))(primitiveReducer),
 		name: withPrefixedAction('PLAYER_NAME')(primitiveReducer),
 		hp: compose(withPrefixedAction('PLAYER_HP'), withDefault(100))(primitiveReducer),
 		maxHp: compose(withPrefixedAction('PLAYER_MAX_HP'), withDefault(100))(primitiveReducer),

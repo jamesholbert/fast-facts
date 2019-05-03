@@ -151,8 +151,9 @@ export const mathChoices = [
 			{
 				level: 2,
 				range: 10,
-				url: 'http://3.bp.blogspot.com/-XI6QPAjn7BA/UqiNVE35eeI/AAAAAAAAAvw/JJAw16uuCRw/s1600/Chuffy+Lickwound.png',
-				name: 'Goblin'
+				requiredOneOf: [2,5,9],
+				url: 'http://clipart-library.com/images/BigEbEBi8.png',
+				name: 'Drigon'
 			},
 			{
 				level: 3,
@@ -174,8 +175,11 @@ export const mathChoices = [
 
 export const getMathQuestion = ({ calculation, reference, levels }, level) => {
 	const levelOptions = levels.filter(l=>level===l.level)[0]
-	
+
 	let [ first, second ] = getTwoRandomNumbers(levelOptions.range)
+	if(levelOptions.requiredOneOf){
+		first = levelOptions.requiredOneOf[getRandomNumber(3)-1]
+	}	
 	if(first < second && levelOptions.enforcePositive){
 		[ first, second ] = [second, first]
 	}
@@ -193,9 +197,10 @@ export const getMathQuestion = ({ calculation, reference, levels }, level) => {
 	}
 }
 
-const getRandomNumber = range => Math.floor(Math.random() * (range - 2)) + 2
+const getRandomNumberOverOne = range => Math.floor(Math.random() * (range - 2)) + 2
+const getRandomNumber = range => Math.floor(Math.random() * (range)) + 1
 
-const getTwoRandomNumbers = range => [getRandomNumber(range), getRandomNumber(range)]
+const getTwoRandomNumbers = range => [getRandomNumberOverOne(range), getRandomNumberOverOne(range)]
 
 const shuffleArray = array => {
   var currentIndex = array.length, temporaryValue, randomIndex;
